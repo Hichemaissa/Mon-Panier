@@ -2,5 +2,5 @@
 // Ne jamais enregistrer de service_role key ou secret ici.
 window.MONPANIER_SUPABASE = {
   url: "https://kyfyzjvgodiljbqxhsfh.supabase.co",
-  anonKey: ""
+  anonKey: "sb_publishable_sJKsDPA5MRgBC-S-acXvvQ_kOG7y356"
 };
