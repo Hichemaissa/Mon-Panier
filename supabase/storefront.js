@@ -30,8 +30,8 @@ async function refreshCatalog(){
   if(featured){
     const media=featured.querySelector(".featured-media");
     const match=(prod.data||[]).find(p=>
-      p.category==="laptops" && /\\bN2840\\b/i.test((p.name||"")+" "+(p.specs||"")) &&
-      typeof p.image_url==="string" && /^https:\\/\\//i.test(p.image_url)
+      p.category==="laptops" && ((p.name||"")+" "+(p.specs||"")).toUpperCase().includes("N2840") &&
+      typeof p.image_url==="string" && p.image_url.startsWith("https://")
     );
     if(media&&match){
       const visual=media.querySelector(".visual"),note=media.querySelector(".photo-note");
