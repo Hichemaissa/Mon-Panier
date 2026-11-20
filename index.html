@@ -128,6 +128,9 @@ footer{margin-top:65px}
 .categories-direct{padding-top:47px}.category{text-align:left}.category .cat-go{color:#e7670b}
 @media(max-width:900px){.reference-hero-inner{grid-template-columns:155px minmax(0,1fr);gap:15px;padding:24px}.reference-categories{padding-top:75px}.reference-categories button{font-size:11px}.reference-name{font-size:clamp(34px,5.8vw,56px)}.reference-motto{font-size:14px}}
 @media(max-width:650px){.reference-hero{border-radius:21px;margin-top:14px}.reference-hero-inner{grid-template-columns:1fr;padding:19px 16px 22px;gap:10px}.reference-hero-main{grid-row:1}.reference-topline{align-items:center}.reference-cart-art svg{width:94px;height:52px}.reference-motto{font-size:12px;margin:0}.reference-name{margin:4px 0 10px;font-size:clamp(37px,10vw,54px)}.reference-ribbon{font-size:12px;padding:9px 15px}.reference-product-display{gap:8px;margin:15px 0}.reference-showcase-accessories{font-size:18px}.reference-hero-bottom{flex-direction:column}.reference-hero-bottom>span{font-size:12px}.reference-categories{padding-top:2px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.reference-menu-title,.reference-menu-more{grid-column:1/-1}.reference-categories button{display:grid;text-align:center;justify-items:center;font-size:10px;padding:8px 4px;min-height:85px}.reference-category-icon{width:38px;height:38px;font-size:17px}.reference-categories button:hover{transform:none}.reference-menu-more{text-align:center;padding:0}.reference-hero-ctas{justify-content:center}.reference-shop-btn,.reference-contact-btn{padding:10px 13px;font-size:11px}.categories-direct{padding-top:35px}}
+/* Remove redundant category panels while preserving the product filters and the three catalogue groups. */
+.reference-hero-inner{grid-template-columns:minmax(0,1fr)}
+.reference-hero-main{width:100%}
 </style>
 </head>
 <body>
@@ -153,13 +156,6 @@ footer{margin-top:65px}
 <main>
 <section class="container reference-hero" aria-label="Bienvenue chez Mon Panier Informatique">
  <div class="reference-hero-inner">
-  <nav class="reference-categories" aria-label="Catégories principales">
-   <p class="reference-menu-title">Nos univers</p>
-   <button data-category="laptops"><span class="reference-category-icon">💻</span><span>Ordinateurs<br>portables</span></button>
-   <button data-category="desktops"><span class="reference-category-icon">🖥️</span><span>PC de bureau</span></button>
-   <button data-category="accessories"><span class="reference-category-icon">🖱️</span><span>Accessoires</span></button>
-   <div class="reference-menu-more">Composants &amp; jeux : demandez-nous sur WhatsApp</div>
-  </nav>
   <div class="reference-hero-main">
    <div class="reference-topline"><span class="reference-cart-art" aria-hidden="true"><svg viewBox="0 0 190 95" width="185" height="93" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11h19l18 58h107l20-48H43" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="64" cy="84" r="8" fill="currentColor"/><circle cx="143" cy="84" r="8" fill="currentColor"/><rect x="77" y="32" width="37" height="26" rx="2" stroke="currentColor" stroke-width="4"/><path d="M87 62h17m-8-4v4m27-36h21v34h-21z" stroke="currentColor" stroke-width="4"/></svg></span><p class="reference-motto">Votre matériel<br><strong>au meilleur prix !</strong></p></div>
    <h1 class="reference-name"><span>Mon Panier</span><strong>Informatique</strong></h1>
@@ -172,14 +168,6 @@ footer{margin-top:65px}
    <div class="reference-hero-bottom"><span>Qualité · Fiabilité · Service</span><div class="reference-hero-ctas"><button data-category="all" class="reference-shop-btn">Voir les produits</button><button data-action="contact" class="reference-contact-btn">Nous contacter</button></div></div>
   </div>
  </div>
-</section>
-<section class="container section categories-direct" id="categories">
-  <div class="section-head"><div><div class="eyebrow">MON PANIER INFORMATIQUE</div><h1 class="catalog-heading">Nos catégories</h1></div></div>
-  <div class="categories">
-    <button class="category cat-laptops" data-category="laptops"><h3>PC portables</h3><span class="cat-go">Voir les produits →</span><span class="cat-art" id="catLaptop"></span></button>
-    <button class="category cat-desktops" data-category="desktops"><h3>PC de bureau</h3><span class="cat-go">Voir les produits →</span><span class="cat-art" id="catDesktop"></span></button>
-    <button class="category cat-accessories" data-category="accessories"><h3>Accessoires</h3><span class="cat-go">Voir les produits →</span><span class="cat-art" id="catAccessory"></span></button>
-  </div>
 </section>
 <section class="container section products-wrap" id="products">
   <div class="section-head"><div><div class="eyebrow">BOUTIQUE</div><h2>Nos produits</h2><p class="section-sub" id="resultsHint">Catalogue de démonstration</p></div></div>
@@ -226,7 +214,7 @@ footer{margin-top:65px}
  <div class="container">
   <div class="footer-grid">
    <div><a class="brand" href="#"><span class="brandmark"><svg viewBox="0 0 40 40" fill="none"><path d="M5 26V11l15-6 15 6v15l-15 9L5 26Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="m5 11 15 11 15-11M20 22v13" stroke="currentColor" stroke-width="3"/></svg></span><span><span class="brand-title">MON <span>PANIER</span></span><span class="brand-small">INFORMATIQUE</span></span></a><p class="footer-desc">PC portables · PC de bureau · Accessoires</p></div>
-   <div><h4>Catégories</h4><a href="#products" data-category="laptops">PC portables</a><a href="#products" data-category="desktops">PC de bureau</a><a href="#products" data-category="accessories">Accessoires</a></div>
+   <div><h4>Explorer</h4><a href="#products" data-category="laptops">PC portables</a><a href="#products" data-category="desktops">PC de bureau</a><a href="#products" data-category="accessories">Accessoires</a></div>
    <div><h4>Services</h4><button class="plain-link" data-action="cart">Mon panier</button><button class="plain-link" data-action="favorites">Mes favoris</button><button class="plain-link" data-action="settings">Paramètres</button><a href="https://wa.me/213560283892" target="_blank" rel="noopener noreferrer">WhatsApp : +213 560 28 38 92</a></div>
   </div>
   <div class="foot-bottom"><span>© <span id="year"></span> Mon Panier Informatique</span><span>Catalogue de démonstration · Prix indicatifs</span></div>
@@ -375,7 +363,7 @@ $("#overlay").addEventListener("click",closeAll);document.addEventListener("keyd
 $("#sortSelect").addEventListener("change",e=>{state.sort=e.target.value;renderProducts()});
 $("#settingsForm").addEventListener("submit",e=>{e.preventDefault();const value=$("#shopPhone").value.replace(/\D/g,"");if(value&&!(value.length>=9&&value.length<=15)){toast("Saisissez un numéro avec l’indicatif du pays.");return}state.phone=value;write("monpanier-phone",value);closeAll();toast(value?"Numéro WhatsApp enregistré ✓":"Numéro WhatsApp effacé")});
 $("#newProductForm").addEventListener("submit",e=>{e.preventDefault();const name=$("#newName").value.trim(),cat=$("#newCat").value,price=Number($("#newPrice").value),specs=$("#newSpecs").value.trim();if(!name||!categoryNames[cat]||!(price>0&&price<=1e8)){toast("Vérifiez les informations du produit.");return}const colors={laptops:"#409ed5",desktops:"#e17d37",accessories:"#9070d6"},artNames={laptops:"laptop",desktops:"desktop",accessories:"keyboard"};state.custom.push({id:"u"+Date.now().toString(36),name,category:cat,price,specs:specs||"Nouveau produit",badge:"Ajouté",art:artNames[cat],color:colors[cat],glow:"#d4eaf0"});write("monpanier-custom",state.custom);$("#newProductForm").reset();state.cat=cat;renderProducts();closeAll();toast("Produit ajouté localement ✓");$("#products").scrollIntoView({behavior:"smooth"})});
-$("#catLaptop").innerHTML=art(STARTER_PRODUCTS[0]);$("#catDesktop").innerHTML=art(STARTER_PRODUCTS[4]);$("#catAccessory").innerHTML=art(STARTER_PRODUCTS[8]);$("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
+$("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
