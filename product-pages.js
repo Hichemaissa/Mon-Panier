@@ -78,9 +78,11 @@ function renderImage(){
  const thumbs=view.querySelector("#mp-gallery-thumbs");
  if(!holder||!thumbs)return;
  if(!images.length){
-  holder.innerHTML=typeof art==="function"?art(current):'<span>Photo non disponible</span>';
+  holder.innerHTML=typeof art==="function"&&current.art?art(current):'<span>Photo non disponible</span>';
   thumbs.innerHTML="";
   holder.style.cursor="default";
+  const nav=view.querySelector(".mp-gallery-nav");
+  if(nav)nav.style.display="none";
   return;
  }
  holder.innerHTML='<img src="'+safe(images[active])+'" alt="'+safe(current.name)+' — photo '+(active+1)+'" loading="eager">';
@@ -154,7 +156,9 @@ function back(){
  window.scrollTo({top:0,behavior:"auto"});
 }
 d.addEventListener("click",event=>{
- const direct=event.target.closest('[data-action="detail"]');
+ const nearestAction=event.target.closest("[data-action]");
+ if(nearestAction && nearestAction.dataset.action!=="detail")return;
+ const direct=nearestAction&&nearestAction.dataset.action==="detail"?nearestAction:null;
  const card=event.target.closest(".product[data-mp-product],.featured-laptop[data-mp-product]");
  if(direct || card){
   if(!direct && event.target.closest("a,button,input,select,textarea,[data-action]"))return;
