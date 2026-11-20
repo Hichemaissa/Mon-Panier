@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Administration · Mon Panier</title>
+<style>
+:root{--orange:#f58227;--dark:#262332;--line:#e7e8ec}*{box-sizing:border-box}body{margin:0;background:#f7f8fb;color:#29303b;font:14px/1.5 system-ui,Arial}header{padding:16px 4vw;background:var(--dark);color:white;display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}header b{font-size:20px}header a{color:#ffbb84}main{max-width:1150px;margin:auto;padding:24px 16px 65px}.panel,.stat{padding:20px;border:1px solid var(--line);background:white;border-radius:16px;margin-bottom:17px;box-shadow:0 8px 30px #24283908}h1{font-size:25px;margin:0 0 7px}h2{font-size:19px;margin:0 0 13px}p,small{color:#637080}button,input,select,textarea{font:inherit}button{background:#f0f1f5;border:0;border-radius:9px;padding:10px 15px;cursor:pointer}button.primary{background:var(--orange);color:#fff;font-weight:700}button:disabled{opacity:.5;cursor:not-allowed}input,select,textarea{border:1px solid #d5d9e1;padding:11px;border-radius:9px;width:100%}label{display:grid;gap:5px;font-weight:600;font-size:12px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.fields{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{margin:0}.stat span{color:#657080;font-size:12px}.stat strong{display:block;font-size:26px;margin-top:5px}.flex{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}.tabs{margin:18px 0}.tabs button.on{background:var(--dark);color:white}.hidden{display:none!important}table{width:100%;border-collapse:collapse}th,td{padding:11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}td{font-size:13px}th{font-size:12px;color:#6b7380}.scroll{overflow-x:auto}td button{padding:7px 10px}.muted{color:#6b7380}#notice{min-height:25px;font-weight:600}#notice.error{color:#b42c2c}#notice.success{color:#237547}.warning{background:#fff4e9;border-left:4px solid var(--orange);border-radius:8px;padding:12px;margin:12px 0}form{display:grid;gap:14px}@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}.fields{grid-template-columns:1fr}}@media(max-width:460px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body><header><b>🛒 Mon Panier · <span style="color:#ff9a52">Administration</span></b><div class="flex"><a href="index.html">Voir la boutique</a><button id="signout" class="hidden">Déconnexion</button></div></header>
+<main><div id="notice" role="status"></div>
+<section id="setup" class="panel hidden"><h1>Configuration requise</h1><p>Créez un projet Supabase puis exécutez <code>supabase/schema.sql</code> dans le SQL Editor. Renseignez l'URL et la clé publique anon dans <code>supabase/config.js</code>, créez votre compte dans Authentication, puis ajoutez l'ID de l'utilisateur dans <code>public.admin_users</code>. Ne publiez jamais la clé service_role.</p></section>
+<section id="login" class="panel hidden" style="max-width:460px;margin:35px auto"><h1>Connexion administrateur</h1><form id="login-form"><label>E-mail<input id="login-email" type="email" required autocomplete="username"></label><label>Mot de passe<input id="login-password" type="password" required autocomplete="current-password"></label><button class="primary">Connexion</button></form></section>
+<section id="dashboard" class="hidden"><h1>Tableau de bord</h1><p>Gérez vos produits, votre stock et les commandes enregistrées sur le site.</p>
+<div class="grid"><div class="stat"><span>Produits actifs</span><strong id="count-products">—</strong></div><div class="stat"><span>Stock faible (≤ 3)</span><strong id="count-low">—</strong></div><div class="stat"><span>Commandes</span><strong id="count-orders">—</strong></div><div class="stat"><span>Montant total non annulé</span><strong id="count-total">—</strong></div></div>
+<div class="flex tabs"><button class="on" data-tab="products">Produits et stock</button><button data-tab="orders">Commandes</button><button data-tab="settings">Paramètres</button></div>
+<div id="view-products"><div class="panel"><div class="flex between"><h2>Catalogue</h2><button class="primary" id="add">+ Nouveau produit</button></div><div class="scroll"><table><thead><tr><th>Nom</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Visible</th><th>Actions</th></tr></thead><tbody id="product-list"></tbody></table></div></div>
+<div class="panel hidden" id="editor"><h2 id="editor-title">Nouveau produit</h2><form id="product-form"><input id="p-id" type="hidden"><div class="fields"><label>Nom<input id="p-name" required maxlength="120"></label><label>Catégorie<select id="p-category"><option value="laptops">PC portables</option><option value="desktops">PC de bureau</option><option value="accessories">Accessoires</option></select></label><label>Prix (DA)<input id="p-price" required type="number" min="0" step="0.01"></label><label>Ancien prix (DA)<input id="p-old" type="number" min="0" step="0.01"></label><label>Stock<input id="p-stock" type="number" min="0" step="1" required value="0"></label><label>Badge<input id="p-badge" maxlength="60"></label><label>Caractéristiques<input id="p-specs" maxlength="500"></label><label>Adresse image HTTPS<input id="p-image" type="url"></label><label>Ou image du produit<input id="p-upload" type="file" accept="image/jpeg,image/png,image/webp"></label><label>Publier<select id="p-active"><option value="true">Oui</option><option value="false">Non</option></select></label></div><div class="flex"><button class="primary" type="submit">Enregistrer</button><button id="cancel" type="button">Annuler</button></div></form></div></div>
+<div id="view-orders" class="hidden"><div class="panel"><div class="flex between"><h2>Commandes</h2><button id="csv">Exporter CSV</button></div><p class="warning">Commandes non payées automatiquement. Vérifiez chaque client et confirmez la disponibilité avant expédition. Les conversations WhatsApp seules ne sont pas importées.</p><div class="scroll"><table><thead><tr><th>Date</th><th>Client</th><th>Articles</th><th>Total</th><th>Statut</th></tr></thead><tbody id="order-list"></tbody></table></div></div></div>
+<div id="view-settings" class="hidden"><div class="panel"><h2>Coordonnées du magasin</h2><form id="settings-form"><div class="fields"><label>Nom du magasin<input id="shop-name" required></label><label>WhatsApp<input id="shop-phone" required pattern="[0-9]{9,15}"></label></div><div><button class="primary">Enregistrer</button></div></form></div></div>
+</section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase/config.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+const cfg=window.MONPANIER_SUPABASE||{}, valid=!!(cfg.url&&cfg.anonKey&&window.supabase);
+const db=valid?window.supabase.createClient(cfg.url,cfg.anonKey):null;
+const store={products:[],orders:[],items:[],settings:{}};
+const fmt=n=>new Intl.NumberFormat("fr-DZ").format(Number(n)||0)+" DA";
+const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function notify(m,error=false){$("#notice").textContent=m;$("#notice").className=error?"error":"success"}
+function show(name){for(const id of ["setup","login","dashboard"])$("#"+id).classList.toggle("hidden",id!==name);$("#signout").classList.toggle("hidden",name!=="dashboard")}
+async function start(){if(!valid){show("setup");return}const {data:{user}}=await db.auth.getUser();if(!user){show("login");return}const {data,error}=await db.from("admin_users").select("user_id").eq("user_id",user.id).maybeSingle();if(error||!data){show("login");notify("Compte sans droits administrateur.",true);return}show("dashboard");await load()}
+$("#login-form").onsubmit=async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$("#login-email").value.trim(),password:$("#login-password").value});$("#login-password").value="";if(error)notify(error.message,true);else await start()};
+$("#signout").onclick=async()=>{await db.auth.signOut();show("login");notify("Déconnecté.")};
+$$("[data-tab]").forEach(b=>b.onclick=()=>{$$("[data-tab]").forEach(x=>x.classList.toggle("on",x===b));for(const id of ["products","orders","settings"])$("#view-"+id).classList.toggle("hidden",id!==b.dataset.tab)});
+async function load(){
+const [p,o,i,s]=await Promise.all([db.from("products").select("*").limit(1000),db.from("orders").select("*").order("created_at",{ascending:false}).limit(500),db.from("order_items").select("*").limit(5000),db.from("shop_settings").select("*").eq("id",1).maybeSingle()]);
+const e=p.error||o.error||i.error||s.error;if(e){notify(e.message,true);return}
+store.products=p.data||[];store.orders=o.data||[];store.items=i.data||[];store.settings=s.data||{};render();
+}
+function render(){
+$("#count-products").textContent=store.products.filter(x=>x.is_active).length;
+$("#count-low").textContent=store.products.filter(x=>x.is_active&&x.stock<=3).length;
+$("#count-orders").textContent=store.orders.length;
+$("#count-total").textContent=fmt(store.orders.filter(x=>x.status!=="annulee").reduce((s,x)=>s+Number(x.total),0));
+$("#product-list").innerHTML=store.products.map(p=>'<tr><td>'+safe(p.name)+'</td><td>'+safe(p.category)+'</td><td>'+fmt(p.price)+'</td><td>'+p.stock+'</td><td>'+(p.is_active?"Oui":"Non")+'</td><td><button data-edit="'+safe(p.id)+'">Modifier</button><button data-toggle="'+safe(p.id)+'">'+(p.is_active?"Masquer":"Publier")+'</button></td></tr>').join("")||'<tr><td colspan="6">Aucun produit. Ajoutez les articles réels de votre boutique.</td></tr>';
+$("#order-list").innerHTML=store.orders.map(o=>{
+const items=store.items.filter(i=>i.order_id===o.id);
+const description=items.map(i=>safe(i.product_name)+" × "+i.quantity).join("<br>");
+const select='<select data-status="'+safe(o.id)+'">'+["nouvelle","confirmee","expediee","livree","annulee"].map(s=>'<option value="'+s+'"'+(o.status===s?" selected":"")+'>'+s+'</option>').join("")+'</select>';
+return '<tr><td>'+safe(new Date(o.created_at).toLocaleString("fr-DZ"))+'</td><td>'+safe(o.customer_name)+'<br>'+safe(o.customer_phone)+'<br>'+safe(o.customer_city)+'<br><small>'+safe(o.customer_address||"")+'</small><br><small>'+safe(o.notes||"")+'</small></td><td>'+description+'</td><td>'+fmt(o.total)+'</td><td>'+select+'</td></tr>';
+}).join("")||'<tr><td colspan="5">Aucune commande.</td></tr>';
+$("#shop-name").value=store.settings.shop_name||"Mon Panier Informatique";
+$("#shop-phone").value=store.settings.whatsapp||"213560283892";
+}
+function edit(p){$("#product-form").reset();$("#p-id").value=p?.id||"";$("#p-name").value=p?.name||"";$("#p-category").value=p?.category||"laptops";$("#p-price").value=p?.price??"";$("#p-old").value=p?.old_price??"";$("#p-stock").value=p?.stock??0;$("#p-badge").value=p?.badge||"";$("#p-specs").value=p?.specs||"";$("#p-image").value=p?.image_url||"";$("#p-active").value=String(p?.is_active??true);$("#editor-title").textContent=p?"Modifier le produit":"Nouveau produit";$("#editor").classList.remove("hidden");$("#editor").scrollIntoView({behavior:"smooth"})}
+$("#add").onclick=()=>edit(null);
+$("#cancel").onclick=()=>$("#editor").classList.add("hidden");
+$("#product-list").onclick=async e=>{
+const ed=e.target.closest("[data-edit]"),tg=e.target.closest("[data-toggle]");
+if(ed)edit(store.products.find(p=>p.id===ed.dataset.edit));
+if(tg){const p=store.products.find(p=>p.id===tg.dataset.toggle);if(!p)return;const {error}=await db.from("products").update({is_active:!p.is_active,updated_at:new Date().toISOString()}).eq("id",p.id);if(error)notify(error.message,true);else await load()}
+};
+$("#product-form").onsubmit=async e=>{
+e.preventDefault();
+const id=$("#p-id").value,cat=$("#p-category").value,price=Number($("#p-price").value),stock=Number($("#p-stock").value);
+if(!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0){notify("Prix ou stock invalide.",true);return}
+let url=$("#p-image").value.trim()||null,upload=$("#p-upload").files[0];
+if(upload){if(upload.size>5*1024*1024||!["image/jpeg","image/png","image/webp"].includes(upload.type)){notify("Image JPG, PNG ou WEBP, max 5 Mo.",true);return}
+const extension={"image/jpeg":"jpg","image/png":"png","image/webp":"webp"}[upload.type],path="catalogue/"+crypto.randomUUID()+"."+extension;
+const {error}=await db.storage.from("product-images").upload(path,upload,{contentType:upload.type});if(error){notify(error.message,true);return}url=db.storage.from("product-images").getPublicUrl(path).data.publicUrl}
+if(url&&!/^https:\/\//i.test(url)){notify("URL de l'image HTTPS uniquement.",true);return}
+const obj={id:id||"p"+crypto.randomUUID().replaceAll("-","").slice(0,20),name:$("#p-name").value.trim(),category:cat,price,old_price:$("#p-old").value===""?null:Number($("#p-old").value),stock,badge:$("#p-badge").value.trim(),specs:$("#p-specs").value.trim(),image_url:url,is_active:$("#p-active").value==="true",art:cat==="laptops"?"laptop":cat==="desktops"?"desktop":"keyboard",color:"#f58227",glow:"#ffe0b9",updated_at:new Date().toISOString()};
+const {error}=id?await db.from("products").update(obj).eq("id",id):await db.from("products").insert(obj);
+if(error){notify(error.message,true);return}$("#editor").classList.add("hidden");notify("Produit enregistré.");await load()
+};
+$("#order-list").onchange=async e=>{const el=e.target.closest("[data-status]");if(!el)return;const {error}=await db.from("orders").update({status:el.value}).eq("id",el.dataset.status);if(error)notify(error.message,true);else{notify("Statut enregistré.");await load()}};
+$("#settings-form").onsubmit=async e=>{e.preventDefault();const {error}=await db.from("shop_settings").update({shop_name:$("#shop-name").value.trim(),whatsapp:$("#shop-phone").value.trim()}).eq("id",1);if(error)notify(error.message,true);else{notify("Paramètres enregistrés.");await load()}};
+$("#csv").onclick=()=>{const rows=[["Identifiant","Date","Client","Téléphone","Ville","Total DZD","Statut"],...store.orders.map(o=>[o.id,o.created_at,o.customer_name,o.customer_phone,o.customer_city,o.total,o.status])];const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replaceAll('"','""')+'"').join(";")).join("\r\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="commandes-mon-panier.csv";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+start().catch(e=>notify(e.message,true));
+</script></body></html>

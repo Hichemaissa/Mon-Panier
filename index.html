@@ -170,6 +170,7 @@ const fmt=n=>new Intl.NumberFormat("fr-DZ").format(n);
 const priceHTML=p=>`${fmt(p.price)} <span class="currency">DA</span>`;
 const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function art(p){
+ if(p.image_url&&/^https:\/\//i.test(p.image_url))return '<img loading="lazy" alt="'+safe(p.name)+'" src="'+safe(p.image_url)+'" style="width:100%;height:100%;max-height:240px;object-fit:contain;padding:12px">';
  const id=p.id.replace(/[^a-z0-9]/gi,""),c=p.color;
  const prefix=`<svg class="art-svg" viewBox="0 0 300 230" aria-hidden="true"><defs>
  <linearGradient id="met${id}" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#b6c7d6"/><stop offset=".52" stop-color="#ecf4f9"/><stop offset="1" stop-color="#66798e"/></linearGradient>
@@ -255,5 +256,8 @@ $("#settingsForm").addEventListener("submit",e=>{e.preventDefault();const value=
 $("#newProductForm").addEventListener("submit",e=>{e.preventDefault();const name=$("#newName").value.trim(),cat=$("#newCat").value,price=Number($("#newPrice").value),specs=$("#newSpecs").value.trim();if(!name||!categoryNames[cat]||!(price>0&&price<=1e8)){toast("Vérifiez les informations du produit.");return}const colors={laptops:"#409ed5",desktops:"#e17d37",accessories:"#9070d6"},artNames={laptops:"laptop",desktops:"desktop",accessories:"keyboard"};state.custom.push({id:"u"+Date.now().toString(36),name,category:cat,price,specs:specs||"Nouveau produit",badge:"Ajouté",art:artNames[cat],color:colors[cat],glow:"#d4eaf0"});write("monpanier-custom",state.custom);$("#newProductForm").reset();state.cat=cat;renderProducts();closeAll();toast("Produit ajouté localement ✓");$("#products").scrollIntoView({behavior:"smooth"})});
 $("#catLaptop").innerHTML=art(STARTER_PRODUCTS[0]);$("#catDesktop").innerHTML=art(STARTER_PRODUCTS[4]);$("#catAccessory").innerHTML=art(STARTER_PRODUCTS[8]);$("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase/config.js"></script>
+<script src="./supabase/storefront.js"></script>
 </body>
 </html>
