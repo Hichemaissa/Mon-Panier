@@ -1,6 +1,6 @@
-// Configuration publique (clé anon seulement, jamais service_role).
-// Renseigner les valeurs après avoir créé le projet Supabase.
+// Configuration publique de Supabase : URL et clé publiable (anon/publishable).
+// Ne jamais enregistrer de service_role key ou secret ici.
 window.MONPANIER_SUPABASE = {
-  url: "",
+  url: "https://kyfyzjvgodiljbqxhsfh.supabase.co",
   anonKey: ""
 };
