@@ -25,6 +25,33 @@ async function refreshCatalog(){
    glow:p.glow||"#ffe0b9",image_url:p.image_url||"",stock:p.stock
   }));
   state.phone=settings.data?.whatsapp||shopOriginalPhone;
+  // Synchroniser la photo de la fiche mise en avant avec le vrai produit.
+  const featured=document.getElementById("featured-laptop-n2840");
+  if(featured){
+    const media=featured.querySelector(".featured-media");
+    const match=(prod.data||[]).find(p=>
+      p.category==="laptops" && /\\bN2840\\b/i.test((p.name||"")+" "+(p.specs||"")) &&
+      typeof p.image_url==="string" && /^https:\\/\\//i.test(p.image_url)
+    );
+    if(media&&match){
+      const visual=media.querySelector(".visual"),note=media.querySelector(".photo-note");
+      const photo=document.createElement("img");
+      photo.src=match.image_url;
+      photo.alt="Photo réelle du "+match.name;
+      photo.loading="lazy";
+      photo.style.cssText="display:block;width:100%;height:100%;min-height:230px;object-fit:contain;padding:12px";
+      photo.addEventListener("error",()=>{
+        photo.remove();
+        if(visual)visual.style.display="";
+        if(note)note.style.display="";
+        media.setAttribute("aria-label","Emplacement réservé à la photo réelle du PC portable");
+      },{once:true});
+      if(visual)visual.style.display="none";
+      if(note)note.style.display="none";
+      media.setAttribute("aria-label",photo.alt);
+      media.prepend(photo);
+    }
+  }
   const current=new Set(state.custom.map(x=>x.id));
   for(const key of Object.keys(state.cart)){if(!current.has(key))delete state.cart[key]}
   write("monpanier-cart",state.cart);
