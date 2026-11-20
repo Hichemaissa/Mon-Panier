@@ -107,4 +107,5 @@ $("#order-list").onchange=async e=>{const el=e.target.closest("[data-status]");i
 $("#settings-form").onsubmit=async e=>{e.preventDefault();const {error}=await db.from("shop_settings").update({shop_name:$("#shop-name").value.trim(),whatsapp:$("#shop-phone").value.trim()}).eq("id",1);if(error)notify(error.message,true);else{notify("Paramètres enregistrés.");await load()}};
 $("#csv").onclick=()=>{const rows=[["Identifiant","Date","Client","Téléphone","Ville","Total DZD","Statut"],...store.orders.map(o=>[o.id,o.created_at,o.customer_name,o.customer_phone,o.customer_city,o.total,o.status])];const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replaceAll('"','""')+'"').join(";")).join("\r\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="commandes-mon-panier.csv";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 start().catch(e=>notify(e.message,true));
-</script></body></html>
+</script><script src="./branding.js"></script>
+</body></html>
