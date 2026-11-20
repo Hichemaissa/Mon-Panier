@@ -66,8 +66,8 @@ function special(id){
  return null;
 }
 function product(id){
- if(typeof window.getProduct==="function"){
-   const found=window.getProduct(id);if(found)return found;
+ if(typeof getProduct==="function"){
+   const found=getProduct(id);if(found)return found;
  }
  return special(id);
 }
@@ -78,7 +78,7 @@ function renderImage(){
  const thumbs=view.querySelector("#mp-gallery-thumbs");
  if(!holder||!thumbs)return;
  if(!images.length){
-  holder.innerHTML=typeof window.art==="function"?window.art(current):'<span>Photo non disponible</span>';
+  holder.innerHTML=typeof art==="function"?art(current):'<span>Photo non disponible</span>';
   thumbs.innerHTML="";
   holder.style.cursor="default";
   return;
@@ -92,10 +92,10 @@ function renderImage(){
  if(nav)nav.style.display=images.length>1?"flex":"none";
 }
 function relatedCards(p){
- if(typeof window.allProducts!=="function")return "";
- return window.allProducts().filter(x=>x.category===p.category&&x.id!==p.id&&x.is_active!==false).slice(0,4).map(x=>{
+ if(typeof allProducts!=="function")return "";
+ return allProducts().filter(x=>x.category===p.category&&x.id!==p.id&&x.is_active!==false).slice(0,4).map(x=>{
   const pics=photos(x);
-  const visual=pics.length?'<img loading="lazy" src="'+safe(pics[0])+'" alt="">':typeof window.art==="function"?window.art(x):"";
+  const visual=pics.length?'<img loading="lazy" src="'+safe(pics[0])+'" alt="">':typeof art==="function"?art(x):"";
   return '<button type="button" class="mp-related-card" data-mp-product="'+safe(x.id)+'"><div class="mp-art">'+visual+'</div><strong>'+safe(x.name)+'</strong><span>'+money(x.price)+'</span></button>';
  }).join("");
 }
@@ -114,7 +114,7 @@ function show(id){
  const price=p.price==null||p.inquiryOnly&&p.price==null?"Prix sur demande":money(p.price);
  const priceHtml='<div class="mp-price">'+safe(price)+(p.oldPrice?'<span class="mp-original">'+money(p.oldPrice)+'</span>':"")+'</div>';
  const note=p.availabilityNote||(p.inquiryOnly?"Disponibilité à confirmer auprès du vendeur.":"Prix et stock à confirmer au moment de la commande.");
- const whatsapp=(typeof window.state==="object"&&window.state.phone)||"213560283892";
+ const whatsapp=(typeof state==="object"&&state.phone)||"213560283892";
  const query="Bonjour, je souhaite des informations sur "+p.name+(p.price?" (prix affiché : "+money(p.price)+")":"")+". Est-il disponible ?";
  const wa="https://wa.me/"+encodeURIComponent(whatsapp.replace(/\D/g,""))+"?text="+encodeURIComponent(query);
  const buying=p.inquiryOnly?'<a target="_blank" rel="noopener noreferrer" href="'+safe(wa)+'">Demander sur WhatsApp</a>':'<button type="button" data-mp-add>+ Ajouter au panier</button><a class="mp-secondary" target="_blank" rel="noopener noreferrer" href="'+safe(wa)+'">Poser une question</a>';
@@ -144,14 +144,14 @@ function open(id,replace){
  const url=new URL(location.href);url.searchParams.set("produit",id);
  if(replace)history.replaceState({product:id},"",url);
  else history.pushState({product:id},"",url);
- show(id);window.scrollTo({top:0,behavior:"instant"});
+ show(id);window.scrollTo({top:0,behavior:"auto"});
 }
 function back(){
  const url=new URL(location.href);url.searchParams.delete("produit");
  history.pushState({},"",url);
  view.hidden=true;d.body.classList.remove("mp-detail-open");
  d.title="Mon Panier Informatique";
- window.scrollTo({top:0,behavior:"instant"});
+ window.scrollTo({top:0,behavior:"auto"});
 }
 d.addEventListener("click",event=>{
  const direct=event.target.closest('[data-action="detail"]');
@@ -174,7 +174,7 @@ view.addEventListener("click",event=>{
  if(event.target.closest("[data-mp-prev]")){active=(active-1+images.length)%images.length;renderImage();return;}
  if(event.target.closest("[data-mp-back]")){back();return;}
  if(event.target.closest("[data-mp-add]")){
-  if(current&&!current.inquiryOnly&&typeof window.add==="function"){window.add(current.id);window.toast&&window.toast("Produit ajouté au panier ✓")}return;
+  if(current&&!current.inquiryOnly&&typeof add==="function"){add(current.id)}return;
  }
  const rel=event.target.closest("[data-mp-product]");
  if(rel){open(rel.dataset.mpProduct);return;}
