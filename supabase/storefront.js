@@ -24,6 +24,15 @@ async function refreshCatalog(){
    badge:p.badge||"",art:p.art||"laptop",color:p.color||"#f58227",
    glow:p.glow||"#ffe0b9",image_url:p.image_url||"",stock:p.stock
   }));
+  // Optional migration: additional photo URLs for the product detail gallery.
+  // Keep the live catalogue usable if the owner has not applied the migration yet.
+  try {
+    const album=await db.from("products").select("id,image_urls").eq("is_active",true);
+    if(!album.error){
+      const extra=new Map((album.data||[]).map(row=>[row.id,Array.isArray(row.image_urls)?row.image_urls:[]]));
+      state.custom.forEach(item=>{item.image_urls=extra.get(item.id)||[]});
+    }
+  }catch(err){console.warn("Product gallery not yet configured.",err)}
   state.phone=settings.data?.whatsapp||shopOriginalPhone;
   // Synchroniser la photo de la fiche mise en avant avec le vrai produit.
   const featured=document.getElementById("featured-laptop-n2840");
@@ -65,6 +74,7 @@ async function refreshCatalog(){
   const settingsForm=document.querySelector("#settingsForm");
   if(settingsForm)settingsForm.closest(".dialog")?.classList.add("hidden"); // no public shop phone overrides
   const btns=document.querySelectorAll('[data-action="settings"]');btns.forEach(b=>b.style.display="none");
+  document.dispatchEvent(new Event("monpanier:catalog-ready"));
   toast("Catalogue synchronisé ✓");
  }catch(error){console.error("Supabase catalog:",error);toast("Connexion au catalogue impossible. Réessayez.");}
 }
