@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ff7414">
+  <meta name="description" content="Découvrez les photos, le prix et les caractéristiques de ce produit chez Mon Panier Informatique.">
+  <title>Fiche produit | Mon Panier Informatique</title>
+  <style>
+    :root{--orange:#fa7417;--deep:#312831;--light:#fff9f4;--line:#f0e1d4;--ink:#272431;--muted:#787884}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--light);color:var(--ink);font:15px/1.65 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+    a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+    .container{width:min(1200px,calc(100% - 32px));margin:auto}
+    .topline{background:#31252b;color:#ffe2c7;padding:8px;text-align:center;font-size:12px}
+    .header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;box-shadow:0 4px 20px #733d0f0b}
+    .head-inner{min-height:75px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+    .brand{display:inline-flex;align-items:center;gap:10px;font-weight:950;font-size:19px;line-height:1.15}
+    .brandmark{width:42px;height:42px;background:linear-gradient(120deg,#ffb63f,#f65a0a);color:white;border-radius:12px;display:grid;place-items:center;font-size:24px}
+    .brand em{font-style:normal;color:var(--orange)}.brand small{display:block;letter-spacing:1px;font-size:10px;color:#aa6c32}
+    .header-links{display:flex;align-items:center;gap:12px}.header-links a{font-size:13px;font-weight:750;border:1px solid var(--line);padding:9px 13px;border-radius:12px}
+    .header-links a:hover{background:#fff0e2}.breadcrumbs{font-size:12px;color:#86766c;margin:22px 0}.breadcrumbs a{color:#c85c10}
+    .layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;align-items:start}
+    .panel{border:1px solid var(--line);border-radius:21px;background:white;box-shadow:0 10px 30px #9b642810;padding:20px}
+    .hero-photo{height:min(53vw,480px);min-height:300px;background:#fffaf6;border:1px solid var(--line);border-radius:17px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+    .hero-photo img{display:block;width:100%;height:100%;object-fit:contain;cursor:zoom-in}
+    .hero-photo .placeholder{width:100%;height:100%;display:grid;place-items:center;color:#9c6a4f;text-align:center;padding:20px}
+    .placeholder svg{width:75%;max-width:230px;height:auto}.placeholder span{display:block;font-size:12px;font-weight:600}
+    .thumbs{display:flex;gap:10px;overflow:auto;padding:13px 1px 6px;scrollbar-width:thin;min-height:80px}
+    .thumb{border:2px solid var(--line);background:#fff;border-radius:12px;width:79px;height:76px;flex:0 0 79px;padding:4px;display:grid;place-items:center}
+    .thumb.active{border-color:var(--orange);box-shadow:0 0 0 2px #ffe6cf}.thumb img{width:100%;height:100%;object-fit:contain}
+    .gallery-footer{display:flex;justify-content:space-between;align-items:center;gap:9px;font-size:12px;color:#8e7562;margin-top:8px}.gallery-footer button{background:#fff3e6;border:0;border-radius:9px;color:#bc621a;padding:8px 12px;font-weight:700}.gallery-footer button:disabled{opacity:.3}
+    h1{font-size:clamp(24px,2.8vw,35px);line-height:1.26;margin:7px 0 12px}
+    .category{color:#df6814;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .price{font-size:34px;font-weight:900;color:#ed6811;margin:18px 0 5px;line-height:1.3}.old-price{font-size:16px;color:#929198;text-decoration:line-through;font-weight:400}
+    .status{font-size:12px;color:#765b43;background:#fff3e5;border-radius:11px;padding:10px 13px;margin:12px 0 22px}
+    .buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cta{border:0;padding:14px 17px;border-radius:12px;background:var(--orange);color:white;font-weight:800;text-align:center}.cta.alt{background:#fff4ea;border:1px solid #f3cba8;color:#b85a15}.cta:hover{filter:brightness(.97)}
+    .features{margin-top:28px}.features h2{font-size:18px;margin:0 0 13px}.specs{display:grid;gap:9px;margin:0;padding:0;list-style:none}.specs li{background:#fff8f1;padding:10px 12px;border:1px solid #fbecdf;border-radius:10px;font-size:13px}
+    .info-note{font-size:12px;color:#84756d;margin:19px 0 0}
+    #loading{padding:75px 0;text-align:center;color:#806956}#error{padding:45px 0;text-align:center}#error a{color:var(--orange);font-weight:850}
+    [hidden]{display:none!important}.related{padding:45px 0 75px}.related h2{font-size:23px;margin:0 0 16px}
+    .related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+    .related-item{display:block;background:white;border:1px solid var(--line);border-radius:17px;padding:12px;transition:.2s}.related-item:hover{transform:translateY(-3px);box-shadow:0 10px 20px #8b4e1310}
+    .related-thumb{background:#fff5ed;border-radius:12px;height:135px;display:grid;place-items:center;overflow:hidden}.related-thumb img{height:100%;width:100%;object-fit:contain}
+    .related-thumb .placeholder{color:#e68c41;font-size:45px}.related-item b{display:block;font-size:13px;line-height:1.3;margin:10px 0 4px}.related-item span{font-size:13px;color:#d96b20;font-weight:850}
+    footer{background:var(--deep);color:#e9dacf;text-align:center;padding:23px;font-size:12px;margin-top:25px}
+    .zoom{position:fixed;inset:0;z-index:1000;background:#100d10ed;display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
+    .zoom img{max-width:96vw;max-height:94vh;object-fit:contain}.zoom button{position:absolute;top:15px;right:20px;border:0;border-radius:50%;background:white;color:#222;width:43px;height:43px;font-size:25px}
+    @media(max-width:770px){.layout{grid-template-columns:1fr;gap:14px}.panel{padding:13px}.hero-photo{height:370px;min-height:250px}.breadcrumbs{margin:13px 0}.related-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.buttons{grid-template-columns:1fr 1fr}}
+    @media(max-width:430px){.head-inner{min-height:65px}.brand{font-size:16px}.brandmark{width:39px;height:39px}.header-links a{font-size:11px;padding:7px}.header-links a:first-child{display:none}.hero-photo{height:310px}.thumb{width:65px;height:65px;flex-basis:65px}.buttons{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="topline">Mon Panier Informatique · Votre matériel au meilleur prix</div>
+  <header class="header"><div class="container head-inner">
+    <a class="brand" href="./index.html" aria-label="Accueil Mon Panier Informatique">
+      <span class="brandmark" aria-hidden="true">🛒</span>
+      <span>MON <em>PANIER</em><small>INFORMATIQUE</small></span>
+    </a>
+    <div class="header-links"><a href="./index.html">← Accueil</a><a href="./index.html#products">Tous les produits</a></div>
+  </div></header>
+  <main class="container">
+    <div id="loading" role="status">Chargement de la fiche produit…</div>
+    <div id="error" hidden><h1>Produit introuvable</h1><p>Ce produit n'est pas disponible ou le lien n'est plus valide.</p><a href="./index.html#products">Retour à la boutique</a></div>
+    <div id="product" hidden>
+      <nav class="breadcrumbs" aria-label="Fil d'Ariane"><a href="./index.html">Accueil</a> / <a href="./index.html#products" id="crumb-category">Produits</a> / <span id="crumb-name"></span></nav>
+      <div class="layout">
+        <section class="panel" aria-label="Photos du produit">
+          <div class="hero-photo" id="hero-photo"></div>
+          <div class="thumbs" id="thumbs" aria-label="Autres vues du produit"></div>
+          <div class="gallery-footer"><button type="button" id="previous">‹ Précédente</button><span id="photo-count" aria-live="polite"></span><button type="button" id="next">Suivante ›</button></div>
+        </section>
+        <section class="panel">
+          <span class="category" id="product-category"></span>
+          <h1 id="product-name"></h1>
+          <div class="price" id="product-price"></div>
+          <p class="status" id="product-notice"></p>
+          <div class="buttons"><button type="button" class="cta" id="add-cart">Ajouter au panier</button><a class="cta alt" id="whatsapp" href="https://wa.me/213560283892" target="_blank" rel="noopener noreferrer">Demander sur WhatsApp</a></div>
+          <div class="features"><h2>Caractéristiques du produit</h2><ul class="specs" id="product-specs"></ul></div>
+          <p class="info-note">Les prix et la disponibilité sont à confirmer avec le magasin avant toute commande.</p>
+        </section>
+      </div>
+      <section class="related" id="related" hidden><h2>Autres produits de la même catégorie</h2><div class="related-grid" id="related-grid"></div></section>
+    </div>
+  </main>
+  <footer>© Mon Panier Informatique · Matériel et accessoires informatiques</footer>
+  <div class="zoom" id="zoom" hidden role="dialog" aria-label="Photo du produit en grand"><button id="close-zoom" type="button" aria-label="Fermer">×</button><img id="zoom-image" alt=""></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase/config.js"></script>
+  <script src="./demo-products.js"></script>
+  <script src="./branding.js"></script>
+  <script src="./produit.js"></script>
+</body>
+</html>
