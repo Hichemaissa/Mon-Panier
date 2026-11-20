@@ -17,7 +17,7 @@
   location.replace(url.href);
 })();
 </script>
-<meta name="theme-color" content="#2b2130">
+<meta name="theme-color" content="#f56c12">
 <meta name="description" content="Mon Panier Informatique : PC portables, ordinateurs de bureau et accessoires. Commande par WhatsApp.">
 <title>Mon Panier Informatique | PC portables, ordinateurs et accessoires</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -131,6 +131,12 @@ footer{margin-top:65px}
 /* Remove redundant category panels while preserving the product filters and the three catalogue groups. */
 .reference-hero-inner{grid-template-columns:minmax(0,1fr)}
 .reference-hero-main{width:100%}
+
+/* Official owner-provided 3:2 promotional image — fully visible on every screen. */
+.banner-section{padding-top:24px}
+.owner-banner{width:100%;overflow:hidden;border-radius:24px;background:#ffefe0;box-shadow:0 15px 45px rgba(194,91,20,.12);border:1px solid #ffe2c4}
+.owner-banner img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain}
+@media(max-width:600px){.banner-section{padding-top:14px}.owner-banner{border-radius:15px;box-shadow:0 8px 26px rgba(194,91,20,.1)}}
 </style>
 </head>
 <body>
@@ -154,20 +160,12 @@ footer{margin-top:65px}
  <div class="container mobile-strip"><label class="searchbox"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16 16 5 5"/></svg><input id="searchMobile" placeholder="Rechercher PC, accessoires..." aria-label="Rechercher des produits"></label></div>
 </header>
 <main>
-<section class="container reference-hero" aria-label="Bienvenue chez Mon Panier Informatique">
- <div class="reference-hero-inner">
-  <div class="reference-hero-main">
-   <div class="reference-topline"><span class="reference-cart-art" aria-hidden="true"><svg viewBox="0 0 190 95" width="185" height="93" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11h19l18 58h107l20-48H43" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="64" cy="84" r="8" fill="currentColor"/><circle cx="143" cy="84" r="8" fill="currentColor"/><rect x="77" y="32" width="37" height="26" rx="2" stroke="currentColor" stroke-width="4"/><path d="M87 62h17m-8-4v4m27-36h21v34h-21z" stroke="currentColor" stroke-width="4"/></svg></span><p class="reference-motto">Votre matériel<br><strong>au meilleur prix !</strong></p></div>
-   <h1 class="reference-name"><span>Mon Panier</span><strong>Informatique</strong></h1>
-   <p class="reference-ribbon">Matériel et accessoires informatique</p>
-   <div class="reference-product-display">
-    <div class="reference-showcase-card reference-showcase-laptop"><img src="./images/pc-portable-celeron-n2840.webp" alt="Ordinateur portable disponible dans notre boutique" loading="eager"></div>
-    <div class="reference-showcase-card reference-showcase-desktop" aria-label="PC de bureau"><svg viewBox="0 0 260 185" role="img" aria-label="Illustration d'un ordinateur de bureau"><rect x="18" y="12" width="175" height="115" rx="10" fill="#303a47"/><rect x="26" y="20" width="159" height="97" rx="4" fill="#9dc4ed"/><path d="M26 94l52-41 30 25 27-24 50 54v9H26Z" fill="#4c88bc"/><path d="M112 127v22m-40 10h83" stroke="#525e68" stroke-width="10" stroke-linecap="round"/><rect x="207" y="18" width="40" height="133" rx="8" fill="#282e39"/><circle cx="227" cy="131" r="5" fill="#ff7e14"/></svg></div>
-    <div class="reference-showcase-accessories" aria-hidden="true"><span>🎧</span><span>⌨️</span><span>🖨️</span></div>
-   </div>
-   <div class="reference-hero-bottom"><span>Qualité · Fiabilité · Service</span><div class="reference-hero-ctas"><button data-category="all" class="reference-shop-btn">Voir les produits</button><button data-action="contact" class="reference-contact-btn">Nous contacter</button></div></div>
+<section class="container banner-section" aria-label="Mon Panier Informatique : matériel et accessoires informatiques">
+  <div class="owner-banner">
+    <img id="main-brand-banner" width="1536" height="1024"
+      alt="Mon Panier Informatique — Votre matériel au meilleur prix ! Ordinateurs portables, PC de bureau, accessoires, composants et jeux et logiciels. Qualité, fiabilité, service."
+      decoding="async" fetchpriority="high">
   </div>
- </div>
 </section>
 <section class="container section products-wrap" id="products">
   <div class="section-head"><div><div class="eyebrow">BOUTIQUE</div><h2>Nos produits</h2><p class="section-sub" id="resultsHint">Catalogue de démonstration</p></div></div>
@@ -369,5 +367,6 @@ $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 <script src="./supabase/config.js"></script>
 <script src="./supabase/storefront.js"></script>
 <script src="./branding.js"></script>
+<script src="./hero-banner.js"></script>
 </body>
 </html>
