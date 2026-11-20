@@ -3,6 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+// Les liens de récupération envoyés par Supabase peuvent revenir à l'URL
+// principale du site. Conserver le jeton et ouvrir la page dédiée AVANT
+// le chargement du catalogue ou de son client d'authentification.
+(function(){
+  const hash=new URLSearchParams(location.hash.slice(1));
+  const query=new URLSearchParams(location.search);
+  if(hash.get("type")!=="recovery" && query.get("type")!=="recovery")return;
+  const url=new URL("reset-password.html",location.href);
+  url.search=location.search;
+  url.hash=location.hash;
+  location.replace(url.href);
+})();
+</script>
 <meta name="theme-color" content="#2b2130">
 <meta name="description" content="Mon Panier Informatique : PC portables, ordinateurs de bureau et accessoires. Commande par WhatsApp.">
 <title>Mon Panier Informatique | PC portables, ordinateurs et accessoires</title>
