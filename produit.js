@@ -114,7 +114,9 @@ async function fetchProduct(id){
      console.warn("Unable to read current Supabase product",e);
    }
  }
- return demo.find(x=>x.id===id)||null;
+ const sample=demo.find(x=>x.id===id);
+ // When the live database is active, demo items are previews, never real orders.
+ return sample?(db?{...sample,inquiryOnly:true,note:"Catalogue de démonstration : produit et prix indicatifs. Demandez confirmation au magasin."}:sample):null;
 }
 async function fetchRelated(p){
  const related=$id("related"),grid=$id("related-grid");
@@ -125,7 +127,7 @@ async function fetchRelated(p){
    if(!error&&Array.isArray(data))options=data;
   }catch(e){console.warn(e)}
  }
- if(!options.length)options=demo.filter(x=>x.category===p.category&&x.id!==p.id).slice(0,4);
+ if(!options.length&&!db)options=demo.filter(x=>x.category===p.category&&x.id!==p.id).slice(0,4);
  if(!options.length){related.hidden=true;return}
  related.hidden=false;
  grid.innerHTML=options.map(x=>{
