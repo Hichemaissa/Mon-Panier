@@ -18,11 +18,15 @@ create table if not exists public.products (
   color text not null default '#ff8b2a',
   glow text not null default '#ffe0b9',
   image_url text,
+  image_urls text[] not null default '{}'::text[],
   stock integer not null default 0 check (stock >= 0),
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+-- Existing shops can adopt gallery images without recreating tables.
+alter table public.products add column if not exists image_urls text[] not null default '{}'::text[];
+
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
   customer_name text not null,
