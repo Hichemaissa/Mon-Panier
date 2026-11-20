@@ -89,6 +89,45 @@ footer{margin-top:65px}
 .featured-purchase{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin-top:14px}
 .featured-purchase strong{font-size:18px;color:#c35d15}
 @media(max-width:700px){.featured-laptop{grid-template-columns:1fr;gap:12px;padding:12px}.featured-media{min-height:165px}.featured-media .visual{font-size:60px}.featured-copy{padding:5px}.featured-specs{gap:6px}.featured-specs li{font-size:11px}}
+
+/* Identité Mon Panier inspirée du visuel orange fourni. */
+:root{--ink:#27212a;--bg:#fff9f4;--aqua:#ff760c;--aqua2:#fff1e2;--line:#f2e1d1}
+.brandmark{background:linear-gradient(135deg,#ffb245,#fa5909);color:white;border-radius:12px}
+.brand-title span,.brand-small{color:#f26b14}
+.header{background:rgba(255,252,248,.97)}
+.nav button:hover{color:#f56b0a}
+.reference-hero{margin-top:24px;position:relative;overflow:hidden;isolation:isolate;border:1px solid #ffe0c2;border-radius:30px;box-shadow:0 22px 58px #f88a2520;background:radial-gradient(circle at 60% 26%,#fff 0%,#fffaf4 57%,#fff0de 100%)}
+.reference-hero:before,.reference-hero:after{content:"";position:absolute;width:460px;height:90px;background:linear-gradient(100deg,#ffb327,#ff640b);transform:rotate(-23deg);z-index:-1;opacity:.95}
+.reference-hero:before{top:-105px;left:-90px}.reference-hero:after{bottom:-119px;right:-120px}
+.reference-hero-inner{display:grid;grid-template-columns:210px minmax(0,1fr);gap:26px;padding:30px 38px 28px}
+.reference-categories{display:flex;flex-direction:column;gap:9px;padding-top:95px}
+.reference-menu-title{font-size:11px;text-transform:uppercase;letter-spacing:.11em;font-weight:900;color:#b9682c;margin:0 0 8px 5px}
+.reference-categories button{display:flex;align-items:center;gap:11px;min-height:63px;text-align:left;background:#ffffffbb;border:1px solid #ffdfc5;border-radius:16px;padding:9px 11px;color:#b94e08;font-size:13px;font-weight:850;line-height:1.35;cursor:pointer;transition:.2s}
+.reference-categories button:hover{background:#fff0e3;transform:translateX(4px)}
+.reference-category-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ff9706,#f34a08);color:#fff;font-size:21px;flex:none}
+.reference-menu-more{font-size:11px;color:#9b6a4e;padding:10px 5px}
+.reference-hero-main{min-width:0;text-align:center}
+.reference-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.reference-cart-art{color:#ff7210;display:inline-flex;align-items:center;filter:drop-shadow(0 6px 5px #ef9b5066)}
+.reference-motto{font-size:18px;font-style:italic;color:#d45e0f;line-height:1.4;transform:rotate(-7deg);margin:18px 3px 0;text-align:right}
+.reference-name{font-size:clamp(36px,6.1vw,77px);color:#f36a0c;line-height:1.05;letter-spacing:-.04em;margin:-10px 0 10px;font-weight:950;text-shadow:0 2px 0 #ffe3c8}
+.reference-name span{display:block}.reference-name strong{display:block;font-size:.74em}
+.reference-ribbon{display:inline-block;border-radius:100px;padding:9px 23px;background:linear-gradient(110deg,#ff670d,#f9500c);color:white;font-size:clamp(14px,2vw,22px);font-weight:850;line-height:1.3;margin:0}
+.reference-product-display{display:flex;justify-content:center;align-items:flex-end;gap:14px;max-width:790px;margin:5px auto 10px}
+.reference-showcase-card{background:#fff;border:1px solid #f1e6dc;border-radius:17px;box-shadow:0 11px 24px #c86c2430;overflow:hidden}
+.reference-showcase-laptop{width:43%;max-width:270px;aspect-ratio:1.2;display:grid;place-items:center}
+.reference-showcase-laptop img{width:100%;height:100%;object-fit:contain}
+.reference-showcase-desktop{width:39%;max-width:240px;padding:12px}
+.reference-showcase-desktop svg{width:100%;height:auto;display:block}
+.reference-showcase-accessories{display:flex;flex-direction:column;gap:6px;font-size:28px;padding-bottom:8px}
+.reference-hero-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0 0}
+.reference-hero-bottom>span{color:#e16c1a;font-style:italic;font-weight:800;font-size:15px}
+.reference-hero-ctas{display:flex;flex-wrap:wrap;gap:8px}
+.reference-shop-btn,.reference-contact-btn{border-radius:12px;font-weight:850;font-size:13px;padding:12px 17px;border:1px solid #ff8b43}
+.reference-shop-btn{background:#f66d15;color:#fff}.reference-contact-btn{background:#fff;color:#c45311}
+.categories-direct{padding-top:47px}.category{text-align:left}.category .cat-go{color:#e7670b}
+@media(max-width:900px){.reference-hero-inner{grid-template-columns:155px minmax(0,1fr);gap:15px;padding:24px}.reference-categories{padding-top:75px}.reference-categories button{font-size:11px}.reference-name{font-size:clamp(34px,5.8vw,56px)}.reference-motto{font-size:14px}}
+@media(max-width:650px){.reference-hero{border-radius:21px;margin-top:14px}.reference-hero-inner{grid-template-columns:1fr;padding:19px 16px 22px;gap:10px}.reference-hero-main{grid-row:1}.reference-topline{align-items:center}.reference-cart-art svg{width:94px;height:52px}.reference-motto{font-size:12px;margin:0}.reference-name{margin:4px 0 10px;font-size:clamp(37px,10vw,54px)}.reference-ribbon{font-size:12px;padding:9px 15px}.reference-product-display{gap:8px;margin:15px 0}.reference-showcase-accessories{font-size:18px}.reference-hero-bottom{flex-direction:column}.reference-hero-bottom>span{font-size:12px}.reference-categories{padding-top:2px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.reference-menu-title,.reference-menu-more{grid-column:1/-1}.reference-categories button{display:grid;text-align:center;justify-items:center;font-size:10px;padding:8px 4px;min-height:85px}.reference-category-icon{width:38px;height:38px;font-size:17px}.reference-categories button:hover{transform:none}.reference-menu-more{text-align:center;padding:0}.reference-hero-ctas{justify-content:center}.reference-shop-btn,.reference-contact-btn{padding:10px 13px;font-size:11px}.categories-direct{padding-top:35px}}
 </style>
 </head>
 <body>
@@ -112,6 +151,28 @@ footer{margin-top:65px}
  <div class="container mobile-strip"><label class="searchbox"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.2"/><path d="m16 16 5 5"/></svg><input id="searchMobile" placeholder="Rechercher PC, accessoires..." aria-label="Rechercher des produits"></label></div>
 </header>
 <main>
+<section class="container reference-hero" aria-label="Bienvenue chez Mon Panier Informatique">
+ <div class="reference-hero-inner">
+  <nav class="reference-categories" aria-label="Catégories principales">
+   <p class="reference-menu-title">Nos univers</p>
+   <button data-category="laptops"><span class="reference-category-icon">💻</span><span>Ordinateurs<br>portables</span></button>
+   <button data-category="desktops"><span class="reference-category-icon">🖥️</span><span>PC de bureau</span></button>
+   <button data-category="accessories"><span class="reference-category-icon">🖱️</span><span>Accessoires</span></button>
+   <div class="reference-menu-more">Composants &amp; jeux : demandez-nous sur WhatsApp</div>
+  </nav>
+  <div class="reference-hero-main">
+   <div class="reference-topline"><span class="reference-cart-art" aria-hidden="true"><svg viewBox="0 0 190 95" width="185" height="93" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 11h19l18 58h107l20-48H43" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="64" cy="84" r="8" fill="currentColor"/><circle cx="143" cy="84" r="8" fill="currentColor"/><rect x="77" y="32" width="37" height="26" rx="2" stroke="currentColor" stroke-width="4"/><path d="M87 62h17m-8-4v4m27-36h21v34h-21z" stroke="currentColor" stroke-width="4"/></svg></span><p class="reference-motto">Votre matériel<br><strong>au meilleur prix !</strong></p></div>
+   <h1 class="reference-name"><span>Mon Panier</span><strong>Informatique</strong></h1>
+   <p class="reference-ribbon">Matériel et accessoires informatique</p>
+   <div class="reference-product-display">
+    <div class="reference-showcase-card reference-showcase-laptop"><img src="./images/pc-portable-celeron-n2840.webp" alt="Ordinateur portable disponible dans notre boutique" loading="eager"></div>
+    <div class="reference-showcase-card reference-showcase-desktop" aria-label="PC de bureau"><svg viewBox="0 0 260 185" role="img" aria-label="Illustration d'un ordinateur de bureau"><rect x="18" y="12" width="175" height="115" rx="10" fill="#303a47"/><rect x="26" y="20" width="159" height="97" rx="4" fill="#9dc4ed"/><path d="M26 94l52-41 30 25 27-24 50 54v9H26Z" fill="#4c88bc"/><path d="M112 127v22m-40 10h83" stroke="#525e68" stroke-width="10" stroke-linecap="round"/><rect x="207" y="18" width="40" height="133" rx="8" fill="#282e39"/><circle cx="227" cy="131" r="5" fill="#ff7e14"/></svg></div>
+    <div class="reference-showcase-accessories" aria-hidden="true"><span>🎧</span><span>⌨️</span><span>🖨️</span></div>
+   </div>
+   <div class="reference-hero-bottom"><span>Qualité · Fiabilité · Service</span><div class="reference-hero-ctas"><button data-category="all" class="reference-shop-btn">Voir les produits</button><button data-action="contact" class="reference-contact-btn">Nous contacter</button></div></div>
+  </div>
+ </div>
+</section>
 <section class="container section categories-direct" id="categories">
   <div class="section-head"><div><div class="eyebrow">MON PANIER INFORMATIQUE</div><h1 class="catalog-heading">Nos catégories</h1></div></div>
   <div class="categories">
