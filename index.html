@@ -365,21 +365,43 @@ body.category-drawer-open{overflow:hidden}
     <div><div class="eyebrow">BONS PLANS</div><h2 id="promotionsTitle">Promotions & offres</h2></div>
     <span>Disponibilité et tarifs à confirmer auprès du vendeur</span>
   </div>
-  <div class="promotion-showcase">
-    <div class="promotion-photo">
-      <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1000&h=720&q=85" alt="Photographie réelle d'un ordinateur portable" loading="lazy">
-    </div>
-    <div class="promotion-copy">
-      <span class="promotion-eyebrow">Mon Panier Informatique</span>
-      <h3>Vos prochaines bonnes affaires commencent ici.</h3>
-      <p>Découvrez notre sélection de matériel informatique et contactez-nous pour connaître les promotions disponibles.</p>
-      <div class="promotion-actions">
-        <a href="#products" class="promotion-button">Découvrir les produits <span aria-hidden="true">›</span></a>
-        <button type="button" data-category="laptops" class="promotion-secondary">PC portables</button>
-      </div>
-      <small>Aucune remise annoncée sans confirmation du prix et du stock.</small>
-    </div>
-  </div>
+<style>
+#promoSlider{position:relative;overflow:hidden;border-radius:23px;border:1px solid #ffdec1;background:linear-gradient(115deg,#fff4e8,#fffaf6);box-shadow:0 12px 34px #d2702020}
+#promoSlider .promo-slide{display:none;grid-template-columns:1fr 1fr;align-items:center;min-height:295px}
+#promoSlider .promo-slide.active{display:grid}
+#promoSlider .promo-slide img{width:100%;height:295px;object-fit:contain;padding:18px;background:#fff}
+#promoSlider .promo-offer{padding:27px 38px}
+#promoSlider .promo-offer small{color:#ad5619;font-weight:800;letter-spacing:.06em}
+#promoSlider .promo-offer h3{font-size:clamp(23px,3vw,34px);margin:10px 0 12px}
+#promoSlider .promo-offer .promo-original{color:#8d8990;text-decoration:line-through;font-size:17px}
+#promoSlider .promo-offer .promo-final{color:#e75a10;font-size:28px;font-weight:900;margin-left:12px}
+#promoSlider .promo-discount{display:inline-block;border-radius:10px;background:#e65d15;color:white;padding:5px 11px;font-weight:800}
+#promoSlider .promo-go{display:inline-block;background:#2c2530;color:white;text-decoration:none;border-radius:10px;padding:10px 17px;margin-top:15px;font-weight:750}
+#promoSlider .promo-nav{display:flex;justify-content:center;gap:10px;align-items:center;background:#fff9f3;padding:9px}
+#promoSlider .promo-nav button{border:1px solid #f0cba8;border-radius:50%;background:#fff;min-width:35px;height:35px;cursor:pointer}
+#promoSlider .promo-dots{display:flex;gap:7px}
+#promoSlider .promo-dots button{min-width:10px;width:10px;height:10px;border-radius:50%;border:0;background:#e9c3a5;padding:0}
+#promoSlider .promo-dots button.active{background:#e65d15;transform:scale(1.2)}
+#promoSlider .promo-disclaimer{font-size:11px;color:#856c56;margin:10px 0 0}
+@media(max-width:680px){#promoSlider .promo-slide{grid-template-columns:1fr}#promoSlider .promo-slide img{height:180px}#promoSlider .promo-offer{padding:18px}#promoSlider .promo-offer .promo-final{font-size:23px}}
+</style><div id="promoSlider" aria-roledescription="carousel" aria-label="Produits en promotion — démonstration">
+<article class="promo-slide active" aria-hidden="false" data-slide="0">
+<img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&amp;fit=crop&amp;w=1050&amp;q=85" alt="Photo illustrative : PC Portable 14 pouces" fetchpriority="high">
+<div class="promo-offer"><small>✨ OFFRE DÉMONSTRATION · PC PORTABLE</small><h3>PC Portable 14 pouces</h3><span class="promo-discount">-9 %</span><div style="margin-top:12px"><span class="promo-original">76 000 DA</span><span class="promo-final">69 000 DA</span></div><a class="promo-go" href="#showcase-eight">Découvrir les produits</a><p class="promo-disclaimer">Prix et remises fictifs pour aperçu uniquement. À confirmer avant publication d'une offre réelle.</p></div>
+</article>
+<article class="promo-slide" aria-hidden="true" data-slide="1">
+<img src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&amp;fit=crop&amp;w=1050&amp;q=85" alt="Photo illustrative : PC Bureautique" loading="lazy">
+<div class="promo-offer"><small>✨ OFFRE DÉMONSTRATION · PC DE BUREAU</small><h3>PC Bureautique</h3><span class="promo-discount">-9 %</span><div style="margin-top:12px"><span class="promo-original">64 000 DA</span><span class="promo-final">58 000 DA</span></div><a class="promo-go" href="#showcase-eight">Découvrir les produits</a><p class="promo-disclaimer">Prix et remises fictifs pour aperçu uniquement. À confirmer avant publication d'une offre réelle.</p></div>
+</article>
+<article class="promo-slide" aria-hidden="true" data-slide="2">
+<img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&amp;fit=crop&amp;w=1050&amp;q=85" alt="Photo illustrative : Écran Bureautique" loading="lazy">
+<div class="promo-offer"><small>✨ OFFRE DÉMONSTRATION · ÉCRAN</small><h3>Écran Bureautique</h3><span class="promo-discount">-10 %</span><div style="margin-top:12px"><span class="promo-original">25 000 DA</span><span class="promo-final">22 500 DA</span></div><a class="promo-go" href="#showcase-eight">Découvrir les produits</a><p class="promo-disclaimer">Prix et remises fictifs pour aperçu uniquement. À confirmer avant publication d'une offre réelle.</p></div>
+</article>
+<article class="promo-slide" aria-hidden="true" data-slide="3">
+<img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&amp;fit=crop&amp;w=1050&amp;q=85" alt="Photo illustrative : Clavier pour ordinateur" loading="lazy">
+<div class="promo-offer"><small>✨ OFFRE DÉMONSTRATION · ACCESSOIRE</small><h3>Clavier pour ordinateur</h3><span class="promo-discount">-10 %</span><div style="margin-top:12px"><span class="promo-original">5 000 DA</span><span class="promo-final">4 500 DA</span></div><a class="promo-go" href="#showcase-eight">Découvrir les produits</a><p class="promo-disclaimer">Prix et remises fictifs pour aperçu uniquement. À confirmer avant publication d'une offre réelle.</p></div>
+</article>
+<div class="promo-nav"><button type="button" id="promoPrev" aria-label="Offre précédente">‹</button><div class="promo-dots"><button type="button" class="active" data-promo-dot="0" aria-label="Afficher l'offre 1"></button><button type="button" class="" data-promo-dot="1" aria-label="Afficher l'offre 2"></button><button type="button" class="" data-promo-dot="2" aria-label="Afficher l'offre 3"></button><button type="button" class="" data-promo-dot="3" aria-label="Afficher l'offre 4"></button></div><button type="button" id="promoNext" aria-label="Offre suivante">›</button></div></div>
 </section>
 <section class="container front-categories" aria-labelledby="frontCategoriesTitle">
   <div class="front-categories-head"><div><div class="eyebrow">DÉCOUVRIR</div><h2 id="frontCategoriesTitle">Nos catégories</h2></div><span>Choisissez votre univers informatique</span></div>
@@ -662,5 +684,16 @@ $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 <script src="./branding.js"></script>
 <script src="./hero-banner.js"></script>
 <script src="./product-pages.js"></script>
+<script>
+(function(){
+const root=document.getElementById("promoSlider");if(!root)return;
+const slides=[...root.querySelectorAll(".promo-slide")],dots=[...root.querySelectorAll("[data-promo-dot]")];let pos=0,timer;
+function show(n){pos=(n+slides.length)%slides.length;slides.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-hidden",String(i!==pos))});dots.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-current",String(i===pos))})}
+function stop(){clearInterval(timer)}function play(){stop();if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches)timer=setInterval(()=>show(pos+1),4500)}
+root.querySelector("#promoPrev").addEventListener("click",()=>{show(pos-1);play()});root.querySelector("#promoNext").addEventListener("click",()=>{show(pos+1);play()});
+dots.forEach((el,i)=>el.addEventListener("click",()=>{show(i);play()}));root.addEventListener("mouseenter",stop);root.addEventListener("mouseleave",play);root.addEventListener("focusin",stop);root.addEventListener("focusout",e=>{if(!root.contains(e.relatedTarget))play()});
+document.addEventListener("visibilitychange",()=>document.hidden?stop():play());play();
+})();
+</script>
 </body>
 </html>
