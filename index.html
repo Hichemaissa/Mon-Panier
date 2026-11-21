@@ -333,7 +333,7 @@ function renderProducts(){
     const matches="pc portable 14 pouces intel celeron n2840 2.16 ghz 4 go ram ssd 120 go hd graphics windows 10 batterie faible";
     featured.hidden=!(["all","laptops"].includes(state.cat)&&!state.favoritesOnly&&(!q||matches.includes(q)));
   }
- let arr=allProducts().filter(p=>(state.cat==="all"||p.category===state.cat)&&(!state.favoritesOnly||state.favorites.has(p.id))&&(p.name+" "+p.specs+" "+categoryNames[p.category]).toLowerCase().includes(q));
+ let arr=allProducts().filter(p=>(state.cat==="all"||p.category===state.cat)&&(!state.favoritesOnly||state.favorites.has(p.id))&&(p.name+" "+p.specs+" "+(categoryNames[p.category]||p.category)).toLowerCase().includes(q));
  if(state.sort==="low")arr.sort((a,b)=>a.price-b.price);
  if(state.sort==="high")arr.sort((a,b)=>b.price-a.price);
  if(state.sort==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
