@@ -145,6 +145,9 @@ footer{margin-top:65px}
 .category-menu-toggle:focus-visible{outline:3px solid #ffb774;outline-offset:3px}
 .shop-layout.categories-closed{grid-template-columns:minmax(0,1fr)}
 .shop-sidebar[hidden]{display:none!important}
+/* Categories are controlled exclusively by the orange three-dot toggle. */
+#filterButtons[hidden]{display:none!important}
+
 /* Product categories: left sidebar on desktop, vertical on phones. */
 .shop-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:22px;align-items:start}
 .shop-sidebar{position:sticky;top:108px;background:#fff;border:1px solid #f0e1d5;border-radius:18px;padding:19px 12px;box-shadow:0 8px 25px #c6763011}
@@ -212,7 +215,7 @@ footer{margin-top:65px}
   </aside>
   <div class="shop-main">
   <div class="toolbar">
-    <div class="filters" id="filterButtons" role="group" aria-label="Filtrer les produits">
+    <div class="filters" id="filterButtons" role="group" aria-label="Filtrer les produits" hidden>
       <button class="filter active" data-category="all">Tous les produits</button>
       <button class="filter" data-category="laptops">💻 PC portables</button>
       <button class="filter" data-category="desktops">🖥️ PC de bureau</button>
