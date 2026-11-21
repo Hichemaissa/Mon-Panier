@@ -140,7 +140,7 @@ footer{margin-top:65px}
 
 /* Product categories: collapsible photo sidebar. */
 .category-menu-toggle{display:inline-flex;align-items:center;gap:8px;background:#ff7617;border:1px solid #f36c10;color:white;border-radius:12px;font-size:13px;font-weight:850;padding:8px 15px;margin-bottom:12px;min-height:42px}
-.category-menu-toggle span:first-child{font-size:24px;line-height:1;display:inline-block}
+.category-menu-toggle .category-dots{font-size:24px;line-height:1;display:inline-block;margin-left:4px}
 .category-menu-toggle[aria-expanded="true"]{background:#32251f;border-color:#32251f}
 .category-menu-toggle:focus-visible{outline:3px solid #ffb774;outline-offset:3px}
 .shop-layout.categories-closed{grid-template-columns:minmax(0,1fr)}
@@ -197,7 +197,7 @@ footer{margin-top:65px}
 <section class="container section products-wrap" id="products">
   <div class="section-head"><div><div class="eyebrow">BOUTIQUE</div><h2>Nos produits</h2><p class="section-sub" id="resultsHint">Catalogue de démonstration</p></div></div>
   <button type="button" id="categoryToggle" class="category-menu-toggle" aria-expanded="false" aria-controls="sideCategoriesPanel" aria-label="Afficher les catégories">
-    <span aria-hidden="true">⋮</span><span>Catégories</span>
+    <span>Catégories</span><span aria-hidden="true" class="category-dots">⋮</span>
   </button>
   <div class="shop-layout categories-closed" id="shopLayout">
   <aside class="shop-sidebar" id="sideCategoriesPanel" aria-label="Catégories des produits" hidden>
