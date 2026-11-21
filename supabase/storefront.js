@@ -7,6 +7,25 @@ const cfg=window.MONPANIER_SUPABASE||{};
 if(!cfg.url||!cfg.anonKey||!window.supabase)return;
 const db=window.supabase.createClient(cfg.url,cfg.anonKey);
 const shopOriginalPhone=state.phone;
+// Catalogue de présentation : utilisé seulement si Supabase ne renvoie aucun
+// produit publié ou si la connexion échoue. Prix indicatifs, stock nul.
+const DISPLAY_FALLBACK=[
+{id:"suggest-laptop-office",category:"laptops",name:"PC Portable 14 pouces",specs:"Référence à confirmer",price:69000,art:"laptop",image_url:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1000",stock:0},
+{id:"suggest-laptop-pro",category:"laptops",name:"PC Portable Pro 15 pouces",specs:"Référence à confirmer",price:119000,art:"laptop",image_url:"https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=1000",stock:0},
+{id:"suggest-desktop-office",category:"desktops",name:"PC Bureautique",specs:"Référence à confirmer",price:58000,art:"desktop",image_url:"https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=1000",stock:0},
+{id:"suggest-desktop-setup",category:"desktops",name:"PC Polyvalent",specs:"Référence à confirmer",price:108000,art:"desktop",image_url:"https://images.unsplash.com/photo-1527430253228-e93688616381?w=1000",stock:0},
+{id:"suggest-screen-office",category:"screens",name:"Écran Bureautique",specs:"Référence à confirmer",price:22500,art:"monitor",image_url:"https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1000",stock:0},
+{id:"suggest-screen-wide",category:"screens",name:"Écran Grand Format",specs:"Référence à confirmer",price:39500,art:"monitor",image_url:"https://images.unsplash.com/photo-1547082299-de196ea013d6?w=1000",stock:0},
+{id:"suggest-accessory-keyboard",category:"accessories",name:"Clavier pour ordinateur",specs:"Référence à confirmer",price:4500,art:"keyboard",image_url:"https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1000",stock:0},
+{id:"suggest-accessory-mouse",category:"accessories",name:"Souris pour ordinateur",specs:"Référence à confirmer",price:2200,art:"mouse",image_url:"https://images.unsplash.com/photo-1527814050087-3793815479db?w=1000",stock:0}
+];
+function showDisplayFallback(){
+ STARTER_PRODUCTS.splice(0,STARTER_PRODUCTS.length);
+ state.custom=DISPLAY_FALLBACK.map(p=>({...p,badge:"Démonstration · prix indicatif",oldPrice:null,color:"#f58227",glow:"#ffe0b9"}));
+ categoryNames.screens=categoryNames.screens||"Écrans";
+ renderProducts();renderCart();
+}
+
 async function loadDynamicCategories(){
  const {data,error}=await db.from("categories").select("name,slug").eq("is_active",true).order("sort_order").order("name");
  if(error){console.warn("Catégories non activées",error.message);return}
@@ -37,6 +56,7 @@ async function refreshCatalog(){
    badge:p.badge||"",art:p.art||"laptop",color:p.color||"#f58227",
    glow:p.glow||"#ffe0b9",image_url:p.image_url||"",stock:p.stock
   }));
+  if(!state.custom.length)showDisplayFallback();
   // Optional migration: additional photo URLs for the product detail gallery.
   // Keep the live catalogue usable if the owner has not applied the migration yet.
   try {
@@ -90,7 +110,7 @@ async function refreshCatalog(){
   const btns=document.querySelectorAll('[data-action="settings"]');btns.forEach(b=>b.style.display="none");
   document.dispatchEvent(new Event("monpanier:catalog-ready"));
   toast("Catalogue synchronisé ✓");
- }catch(error){console.error("Supabase catalog:",error);toast("Connexion au catalogue impossible. Réessayez.");}
+ }catch(error){console.error("Supabase catalog:",error);showDisplayFallback();toast("Catalogue de démonstration affiché · disponibilité à confirmer.");}
 }
 const curtain=document.createElement("div");
 curtain.id="orderModal";curtain.hidden=true;
