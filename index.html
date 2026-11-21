@@ -146,11 +146,13 @@ footer{margin-top:65px}
 .shop-sidebar .side-filter:hover{background:#fff2e6}
 .shop-sidebar .side-filter.active{background:#ff7617;color:#fff}
 .shop-sidebar .side-icon{font-size:21px;min-width:25px}
+.shop-sidebar .side-photo{width:39px;height:39px;flex:none;border-radius:10px;object-fit:cover;background:#fff0df;border:1px solid #f0e4dc}
+.shop-sidebar .side-filter.active .side-photo{border-color:#fff7}
 .shop-main{min-width:0}
 .shop-main .products-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .shop-sidebar .side-filter:focus-visible{outline:3px solid #ffbd80}
 @media(max-width:900px){.shop-layout{grid-template-columns:180px minmax(0,1fr);gap:12px}.shop-main .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:650px){.shop-layout{display:block}.shop-sidebar{position:static;margin-bottom:15px;padding:12px 10px}.shop-sidebar h3{font-size:14px;margin:0 4px 9px}.shop-sidebar .side-list{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.shop-sidebar .side-filter{min-width:max-content;width:auto;padding:9px 11px;font-size:11px;gap:6px}.shop-sidebar .side-icon{font-size:16px;min-width:0}.shop-main .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.shop-layout{display:block}.shop-sidebar{position:static;margin-bottom:15px;padding:12px 10px}.shop-sidebar h3{font-size:14px;margin:0 4px 9px}.shop-sidebar .side-list{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.shop-sidebar .side-filter{min-width:max-content;width:auto;padding:9px 11px;font-size:11px;gap:6px}.shop-sidebar .side-icon{font-size:16px;min-width:0}.shop-sidebar .side-photo{width:28px;height:28px;border-radius:8px}.shop-main .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* The product card itself is clickable; controls inside remain independent. */
 .product[data-mp-product],.featured-laptop[data-mp-product]{cursor:pointer}
 .product[data-mp-product]:focus-visible,.featured-laptop[data-mp-product]:focus-visible{outline:3px solid #ff831c;outline-offset:4px}
@@ -191,10 +193,10 @@ footer{margin-top:65px}
     <h3>Catégories</h3>
     <div class="side-list" id="sideCategories">
       <button class="side-filter active" data-category="all"><span class="side-icon">🛍️</span>Tous les produits</button>
-      <button class="side-filter" data-category="laptops"><span class="side-icon">💻</span>PC portables</button>
-      <button class="side-filter" data-category="desktops"><span class="side-icon">🖥️</span>PC de bureau</button>
-      <button class="side-filter" data-category="screens"><span class="side-icon">🖥️</span>Écrans</button>
-      <button class="side-filter" data-category="accessories"><span class="side-icon">🎧</span>Accessoires</button>
+      <button class="side-filter" data-category="laptops"><img class="side-photo" src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=120&h=120&q=70" alt="" loading="lazy">PC portables</button>
+      <button class="side-filter" data-category="desktops"><img class="side-photo" src="https://images.unsplash.com/photo-1660855551570-dd44e0ab800c?auto=format&fit=crop&w=120&h=120&q=70" alt="" loading="lazy">PC de bureau</button>
+      <button class="side-filter" data-category="screens"><img class="side-photo" src="https://images.unsplash.com/photo-1708200216314-455e3487392a?auto=format&fit=crop&w=120&h=120&q=70" alt="" loading="lazy">Écrans</button>
+      <button class="side-filter" data-category="accessories"><img class="side-photo" src="https://images.unsplash.com/photo-1752867494500-9ea9322f58c9?auto=format&fit=crop&w=120&h=120&q=70" alt="" loading="lazy">Accessoires</button>
     </div>
   </aside>
   <div class="shop-main">
