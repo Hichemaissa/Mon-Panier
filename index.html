@@ -138,6 +138,19 @@ footer{margin-top:65px}
 .owner-banner img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:contain}
 @media(max-width:600px){.banner-section{padding-top:14px}.owner-banner{border-radius:15px;box-shadow:0 8px 26px rgba(194,91,20,.1)}}
 
+/* Product categories: left sidebar on desktop, horizontal scroll on phones. */
+.shop-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:22px;align-items:start}
+.shop-sidebar{position:sticky;top:108px;background:#fff;border:1px solid #f0e1d5;border-radius:18px;padding:19px 12px;box-shadow:0 8px 25px #c6763011}
+.shop-sidebar h3{margin:0 8px 12px;color:#3d2b21;font-size:17px}
+.shop-sidebar .side-filter{display:flex;gap:11px;align-items:center;text-align:left;width:100%;background:transparent;border:0;border-radius:12px;padding:13px 12px;font-size:13px;font-weight:750;color:#584a42}
+.shop-sidebar .side-filter:hover{background:#fff2e6}
+.shop-sidebar .side-filter.active{background:#ff7617;color:#fff}
+.shop-sidebar .side-icon{font-size:21px;min-width:25px}
+.shop-main{min-width:0}
+.shop-main .products-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.shop-sidebar .side-filter:focus-visible{outline:3px solid #ffbd80}
+@media(max-width:900px){.shop-layout{grid-template-columns:180px minmax(0,1fr);gap:12px}.shop-main .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.shop-layout{display:block}.shop-sidebar{position:static;margin-bottom:15px;padding:12px 10px}.shop-sidebar h3{font-size:14px;margin:0 4px 9px}.shop-sidebar .side-list{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.shop-sidebar .side-filter{min-width:max-content;width:auto;padding:9px 11px;font-size:11px;gap:6px}.shop-sidebar .side-icon{font-size:16px;min-width:0}.shop-main .products-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* The product card itself is clickable; controls inside remain independent. */
 .product[data-mp-product],.featured-laptop[data-mp-product]{cursor:pointer}
 .product[data-mp-product]:focus-visible,.featured-laptop[data-mp-product]:focus-visible{outline:3px solid #ff831c;outline-offset:4px}
@@ -173,11 +186,24 @@ footer{margin-top:65px}
 </section>
 <section class="container section products-wrap" id="products">
   <div class="section-head"><div><div class="eyebrow">BOUTIQUE</div><h2>Nos produits</h2><p class="section-sub" id="resultsHint">Catalogue de démonstration</p></div></div>
+  <div class="shop-layout">
+  <aside class="shop-sidebar" aria-label="Catégories des produits">
+    <h3>Catégories</h3>
+    <div class="side-list" id="sideCategories">
+      <button class="side-filter active" data-category="all"><span class="side-icon">🛍️</span>Tous les produits</button>
+      <button class="side-filter" data-category="laptops"><span class="side-icon">💻</span>PC portables</button>
+      <button class="side-filter" data-category="desktops"><span class="side-icon">🖥️</span>PC de bureau</button>
+      <button class="side-filter" data-category="screens"><span class="side-icon">🖥️</span>Écrans</button>
+      <button class="side-filter" data-category="accessories"><span class="side-icon">🎧</span>Accessoires</button>
+    </div>
+  </aside>
+  <div class="shop-main">
   <div class="toolbar">
     <div class="filters" id="filterButtons" role="group" aria-label="Filtrer les produits">
       <button class="filter active" data-category="all">Tous les produits</button>
       <button class="filter" data-category="laptops">💻 PC portables</button>
       <button class="filter" data-category="desktops">🖥️ PC de bureau</button>
+      <button class="filter" data-category="screens">🖥️ Écrans</button>
       <button class="filter" data-category="accessories">🎧 Accessoires</button>
     </div>
     <select class="sort" id="sortSelect" aria-label="Trier les produits">
@@ -232,6 +258,8 @@ footer{margin-top:65px}
   </article>
 
   <div class="products-grid" id="productsGrid"></div>
+  </div>
+  </div>
 </section>
 </main>
 <footer>
@@ -262,7 +290,7 @@ footer{margin-top:65px}
   <h3 style="font-size:16px;margin-bottom:5px">Ajouter un produit (local)</h3>
   <form id="newProductForm">
    <div class="field"><label for="newName">Nom du produit</label><input id="newName" required maxlength="75" placeholder="PC portable Core i5"></div>
-   <div class="field"><label for="newCat">Catégorie</label><select id="newCat"><option value="laptops">PC portables</option><option value="desktops">PC de bureau</option><option value="accessories">Accessoires</option></select></div>
+   <div class="field"><label for="newCat">Catégorie</label><select id="newCat"><option value="laptops">PC portables</option><option value="desktops">PC de bureau</option><option value="screens">Écrans</option><option value="accessories">Accessoires</option></select></div>
    <div class="field"><label for="newPrice">Prix indicatif (DA)</label><input id="newPrice" type="number" min="1" max="100000000" required placeholder="95000"></div>
    <div class="field"><label for="newSpecs">Caractéristiques</label><input id="newSpecs" maxlength="90" placeholder="16 Go RAM • 512 Go SSD"></div>
    <button type="submit" class="btn btn-light full">Ajouter au catalogue</button>
@@ -291,7 +319,7 @@ const $$=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
 function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v??fallback}catch{return fallback}}
 function write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
 const state={cat:"all",sort:"default",query:"",favoritesOnly:false,cart:read("monpanier-cart",{}),favorites:new Set(read("monpanier-likes",[])),phone:read("monpanier-phone","213560283892"),custom:read("monpanier-custom",[])};
-const categoryNames={laptops:"PC portables",desktops:"PC de bureau",accessories:"Accessoires"};
+const categoryNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires"};
 const allProducts=()=>[...STARTER_PRODUCTS,...state.custom];
 const getProduct=id=>allProducts().find(x=>x.id===id);
 const fmt=n=>new Intl.NumberFormat("fr-DZ").format(n);
@@ -338,7 +366,7 @@ function renderProducts(){
  if(state.sort==="high")arr.sort((a,b)=>b.price-a.price);
  if(state.sort==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
  $("#resultsHint").textContent=`${arr.length} produits — ${state.favoritesOnly?"Favoris uniquement":"Prix indicatifs"}`;
- $$(".filter").forEach(b=>b.classList.toggle("active",b.dataset.category===state.cat));
+ $(".filter,.side-filter").forEach(b=>b.classList.toggle("active",b.dataset.category===state.cat));
  $("#productsGrid").innerHTML=arr.length?arr.map(p=>`<article class="product" data-mp-product="${safe(p.id)}" tabindex="0" role="link" aria-label="Voir le produit ${safe(p.name)}">
  <div class="product-art" data-action="detail" data-id="${p.id}" style="--glow:${p.glow||"#ffe3c2"}"><span class="tag ${p.oldPrice?"sale":""}">${safe(p.badge||"Nouveau")}</span><button class="heart ${state.favorites.has(p.id)?"active":""}" data-action="like" data-id="${p.id}" aria-label="Ajouter aux favoris">${state.favorites.has(p.id)?"♥":"♡"}</button>${art(p)}</div>
  <div class="product-content"><div class="product-category">${categoryNames[p.category]}</div><h3 class="product-name">${safe(p.name)}</h3><div class="product-specs">${safe(p.specs)}</div>
@@ -388,7 +416,7 @@ $("#overlay").addEventListener("click",closeAll);document.addEventListener("keyd
 ["#searchDesktop","#searchMobile"].forEach(sel=>{$(sel).addEventListener("input",e=>{state.query=e.target.value;$(sel==="#searchDesktop"?"#searchMobile":"#searchDesktop").value=e.target.value;renderProducts()})});
 $("#sortSelect").addEventListener("change",e=>{state.sort=e.target.value;renderProducts()});
 $("#settingsForm").addEventListener("submit",e=>{e.preventDefault();const value=$("#shopPhone").value.replace(/\D/g,"");if(value&&!(value.length>=9&&value.length<=15)){toast("Saisissez un numéro avec l’indicatif du pays.");return}state.phone=value;write("monpanier-phone",value);closeAll();toast(value?"Numéro WhatsApp enregistré ✓":"Numéro WhatsApp effacé")});
-$("#newProductForm").addEventListener("submit",e=>{e.preventDefault();const name=$("#newName").value.trim(),cat=$("#newCat").value,price=Number($("#newPrice").value),specs=$("#newSpecs").value.trim();if(!name||!categoryNames[cat]||!(price>0&&price<=1e8)){toast("Vérifiez les informations du produit.");return}const colors={laptops:"#409ed5",desktops:"#e17d37",accessories:"#9070d6"},artNames={laptops:"laptop",desktops:"desktop",accessories:"keyboard"};state.custom.push({id:"u"+Date.now().toString(36),name,category:cat,price,specs:specs||"Nouveau produit",badge:"Ajouté",art:artNames[cat],color:colors[cat],glow:"#d4eaf0"});write("monpanier-custom",state.custom);$("#newProductForm").reset();state.cat=cat;renderProducts();closeAll();toast("Produit ajouté localement ✓");$("#products").scrollIntoView({behavior:"smooth"})});
+$("#newProductForm").addEventListener("submit",e=>{e.preventDefault();const name=$("#newName").value.trim(),cat=$("#newCat").value,price=Number($("#newPrice").value),specs=$("#newSpecs").value.trim();if(!name||!categoryNames[cat]||!(price>0&&price<=1e8)){toast("Vérifiez les informations du produit.");return}const colors={laptops:"#409ed5",desktops:"#e17d37",screens:"#ff7617",accessories:"#9070d6"},artNames={laptops:"laptop",desktops:"desktop",screens:"aio",accessories:"keyboard"};state.custom.push({id:"u"+Date.now().toString(36),name,category:cat,price,specs:specs||"Nouveau produit",badge:"Ajouté",art:artNames[cat],color:colors[cat],glow:"#d4eaf0"});write("monpanier-custom",state.custom);$("#newProductForm").reset();state.cat=cat;renderProducts();closeAll();toast("Produit ajouté localement ✓");$("#products").scrollIntoView({behavior:"smooth"})});
 $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
