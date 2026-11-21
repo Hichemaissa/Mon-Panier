@@ -49,11 +49,16 @@ function renderPhoto(){
  }
  const url=photos[active];
  hero.innerHTML='<img src="'+safe(url)+'" alt="'+safe(current.name)+' — photo '+(active+1)+'" loading="eager" decoding="async">';
+ hero.querySelector("img")?.addEventListener("error",()=>{photos.splice(active,1);active=Math.min(active,Math.max(0,photos.length-1));renderPhoto()},{once:true});
+ if(!zoom.hidden){$id("zoom-image").src=url;$id("zoom-image").alt=current.name+" — photo "+(active+1)}
  thumbs.innerHTML=photos.map((u,i)=>'<button type="button" class="thumb'+(i===active?" active":"")+'" data-photo="'+i+'" aria-label="Voir la photo '+(i+1)+'"><img loading="lazy" src="'+safe(u)+'" alt=""></button>').join("");
  $id("photo-count").textContent=photos.length===1?"1 photo disponible":"Photo "+(active+1)+" sur "+photos.length;
  $id("previous").hidden=photos.length<=1;
  $id("next").hidden=photos.length<=1;
 }
+let touchStartX=null;
+$id("hero-photo").addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0]?.screenX??null},{passive:true});
+$id("hero-photo").addEventListener("touchend",e=>{if(touchStartX==null||photos.length<2)return;const delta=(e.changedTouches[0]?.screenX??touchStartX)-touchStartX;touchStartX=null;if(Math.abs(delta)>55)choosePhoto(active+(delta<0?1:-1))},{passive:true});
 function choosePhoto(i){
  if(!photos.length)return;
  active=(i+photos.length)%photos.length;
@@ -90,17 +95,20 @@ function productHTML(p){
  $id("product-name").textContent=p.name;
  document.title=p.name+" | Mon Panier Informatique";
  $id("product-price").textContent=p.price==null?"Prix sur demande":money(p.price);
- if(p.old_price&&Number(p.old_price)>Number(p.price)){
+ if((p.old_price||p.oldPrice)&&Number(p.old_price||p.oldPrice)>Number(p.price)){
    const old=document.createElement("span");old.className="old-price";
-   old.textContent=" "+money(p.old_price);$id("product-price").appendChild(old);
+   old.textContent=" "+money(p.old_price||p.oldPrice);$id("product-price").appendChild(old);
  }
  $id("product-notice").textContent=p.note||"Prix et disponibilité à confirmer auprès du vendeur.";
+ const available=p.stock==null?null:Number(p.stock);
+ if(available===0){$id("product-notice").textContent="Rupture de stock — contactez le magasin pour une prochaine disponibilité."}
+ else if(available>0&&!p.inquiryOnly){$id("product-notice").textContent="Produit en catalogue · Stock indiqué : "+available+" unité(s). Disponibilité à confirmer avant la commande."}
  const specList=String(p.specs||"").split("•").map(s=>s.trim()).filter(Boolean);
  $id("product-specs").innerHTML=specList.length?specList.map(v=>"<li>"+safe(v)+"</li>").join(""):"<li>Caractéristiques sur demande</li>";
  const wa="Bonjour, je souhaite des informations sur "+p.name+(p.price!=null?" — prix affiché : "+money(p.price):"")+". Est-il disponible ?";
  $id("whatsapp").href="https://wa.me/"+phone+"?text="+encodeURIComponent(wa);
  const add=$id("add-cart");
- add.hidden=!!p.inquiryOnly||p.price==null||p.stock===0;
+ add.hidden=!!p.inquiryOnly||p.price==null||available===0;
  renderPhoto();
 }
 async function fetchProduct(id){
