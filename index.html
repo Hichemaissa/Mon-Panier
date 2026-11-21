@@ -248,7 +248,7 @@ body.category-drawer-open{overflow:hidden}
 .front-categories-head>span{font-size:12px;color:#80685a}
 .front-category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .front-category-card{position:relative;display:flex;flex-direction:column;align-items:start;gap:12px;min-width:0;padding:11px 11px 15px;background:#fff;border:1px solid #f0e0d2;border-radius:18px;color:#3b2d23;font-size:15px;font-weight:850;text-align:left;cursor:pointer;box-shadow:0 8px 24px rgba(104,60,24,.07);transition:transform .2s,box-shadow .2s,border-color .2s}
-.front-category-card:hover{transform:translateY(-3px);border-color:#ffac70;box-shadow:0 12px 30px rgba(104,60,24,.14)}
+.front-category-card:hover,.front-category-card.active{transform:translateY(-3px);border-color:#ff8c3e;box-shadow:0 12px 30px rgba(104,60,24,.14)}
 .front-category-card:focus-visible{outline:3px solid #ff9c47;outline-offset:3px}
 .front-category-card img{display:block;width:100%;aspect-ratio:1.45;object-fit:cover;background:#f7e9dc;border-radius:13px}
 .front-category-arrow{position:absolute;right:13px;bottom:13px;color:#f17113;font-size:24px;font-weight:700;line-height:1}
@@ -621,7 +621,20 @@ function renderProducts(){
 }
 function updateBadges(){$("#cartCount").textContent=Object.values(state.cart).reduce((a,n)=>a+n,0);$("#favCount").textContent=state.favorites.size}
 function toast(message){const t=$("#toast");t.textContent=message;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2900)}
-function setCategory(cat){state.cat=cat;state.favoritesOnly=false;renderProducts();$("#products").scrollIntoView({behavior:"smooth",block:"start"})}
+function setCategory(cat){
+ if(!["all","laptops","desktops","screens","accessories"].includes(cat))return;
+ state.cat=cat;state.favoritesOnly=false;
+ // Switching sections must not inherit a search that silently hides all products.
+ state.query="";
+ ["#searchDesktop","#searchMobile"].forEach(selector=>{const input=$(selector);if(input)input.value=""});
+ renderProducts();
+ document.querySelectorAll(".front-category-card").forEach(button=>{
+  const current=button.dataset.category===cat;
+  button.classList.toggle("active",current);
+  button.setAttribute("aria-pressed",String(current));
+ });
+ $("#products").scrollIntoView({behavior:"smooth",block:"start"});
+}
 function add(id){if(!getProduct(id))return;state.cart[id]=(state.cart[id]||0)+1;write("monpanier-cart",state.cart);updateBadges();renderCart();toast("✓ Produit ajouté au panier")}
 function like(id){if(state.favorites.has(id))state.favorites.delete(id);else state.favorites.add(id);write("monpanier-likes",[...state.favorites]);renderProducts();toast(state.favorites.has(id)?"Produit ajouté aux favoris ♥":"Produit retiré des favoris")}
 function renderCart(){
