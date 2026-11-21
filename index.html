@@ -263,6 +263,12 @@ body.category-drawer-open{overflow:hidden}
 
 /* Dedicated promotions announcement and photo showcase */
 .promo-topbar{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:11px 18px;background:linear-gradient(105deg,#e95c07,#ff8d26);color:#fff;text-decoration:none;font-size:13px;font-weight:650;text-align:center}
+.promo-topbar{overflow:hidden;white-space:nowrap}
+.promo-topbar-track{display:flex;align-items:center;justify-content:center;gap:16px;width:max-content;max-width:none;margin-inline:auto;animation:promo-swing 7s ease-in-out infinite alternate;will-change:transform}
+@keyframes promo-swing{from{transform:translateX(-5vw)}to{transform:translateX(5vw)}}
+.promo-topbar:hover .promo-topbar-track,.promo-topbar:focus-visible .promo-topbar-track{animation-play-state:paused}
+@media(max-width:650px){.promo-topbar-track{gap:9px;font-size:11px;animation-duration:6s}.promo-topbar{justify-content:flex-start;padding-inline:7px}.promo-topbar-track{margin-inline:0}}
+@media(prefers-reduced-motion:reduce){.promo-topbar-track{animation:none;white-space:normal;flex-wrap:wrap;width:auto}}
 .promo-topbar-tag{display:inline-flex;align-items:center;padding:4px 9px;border-radius:7px;background:#ffffff28;font-size:12px;font-weight:900;letter-spacing:.03em}
 .promo-topbar strong{font-weight:900;text-decoration:underline;text-underline-offset:3px}
 .promo-topbar:hover{background:linear-gradient(105deg,#c84805,#f27814)}
@@ -302,9 +308,11 @@ body.category-drawer-open{overflow:hidden}
 <body>
 <div class="announcement">CATALOGUE DÉMONSTRATION · PRODUITS ET PRIX INDICATIFS</div>
 <a class="promo-topbar" href="#promotions" aria-label="Découvrir la rubrique Promotions">
-  <span class="promo-topbar-tag">✨ PROMOTIONS</span>
-  <span>Découvrez notre espace offres et bons plans</span>
-  <strong>Voir les offres <span aria-hidden="true">›</span></strong>
+  <span class="promo-topbar-track">
+    <span class="promo-topbar-tag">✨ PROMOTIONS</span>
+    <span>Découvrez notre espace offres et bons plans</span>
+    <strong>Voir les offres <span aria-hidden="true">›</span></strong>
+  </span>
 </a>
 <header class="header">
  <div class="container header-main">
