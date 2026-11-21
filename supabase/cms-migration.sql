@@ -35,7 +35,13 @@ create or replace function public.sync_product_category() returns trigger
 language plpgsql set search_path = '' as $$
 declare v_category public.categories%rowtype;
 begin
- if new.category_id is not null then
+ -- On legacy admin edits the slug changes while category_id still points to the old category.
+ if tg_op = 'UPDATE' and new.category is distinct from old.category
+    and new.category_id is not distinct from old.category_id then
+  select * into v_category from public.categories where slug = new.category;
+  if not found then raise exception 'Unknown category slug'; end if;
+  new.category_id := v_category.id;
+ elsif new.category_id is not null then
   select * into v_category from public.categories where id = new.category_id;
   if not found then raise exception 'Unknown category'; end if;
   new.category := v_category.slug;
