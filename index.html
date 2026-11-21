@@ -691,7 +691,25 @@ const slides=[...root.querySelectorAll(".promo-slide")],dots=[...root.querySelec
 function show(n){pos=(n+slides.length)%slides.length;slides.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-hidden",String(i!==pos))});dots.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-current",String(i===pos))})}
 function stop(){clearInterval(timer)}function play(){stop();if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches)timer=setInterval(()=>show(pos+1),4500)}
 root.querySelector("#promoPrev").addEventListener("click",()=>{show(pos-1);play()});root.querySelector("#promoNext").addEventListener("click",()=>{show(pos+1);play()});
-dots.forEach((el,i)=>el.addEventListener("click",()=>{show(i);play()}));root.addEventListener("mouseenter",stop);root.addEventListener("mouseleave",play);root.addEventListener("focusin",stop);root.addEventListener("focusout",e=>{if(!root.contains(e.relatedTarget))play()});
+dots.forEach((el,i)=>el.addEventListener("click",()=>{show(i);play()}));
+// Swipe horizontally on phones/tablets; keep vertical page scrolling and links usable.
+let touchStartX=0,touchStartY=0,touchStarted=false;
+root.addEventListener("touchstart",e=>{
+ if(e.touches.length!==1)return;
+ touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;
+ touchStarted=true;stop();
+},{passive:true});
+root.addEventListener("touchend",e=>{
+ if(!touchStarted)return;touchStarted=false;
+ const dx=e.changedTouches[0].clientX-touchStartX;
+ const dy=e.changedTouches[0].clientY-touchStartY;
+ if(Math.abs(dx)>=45&&Math.abs(dx)>Math.abs(dy)*1.2){
+  show(pos+(dx<0?1:-1));
+ }
+ play();
+},{passive:true});
+root.addEventListener("touchcancel",()=>{touchStarted=false;play()},{passive:true});
+root.addEventListener("mouseenter",stop);root.addEventListener("mouseleave",play);root.addEventListener("focusin",stop);root.addEventListener("focusout",e=>{if(!root.contains(e.relatedTarget))play()});
 document.addEventListener("visibilitychange",()=>document.hidden?stop():play());play();
 })();
 </script>
