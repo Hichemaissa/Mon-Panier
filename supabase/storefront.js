@@ -7,6 +7,19 @@ const cfg=window.MONPANIER_SUPABASE||{};
 if(!cfg.url||!cfg.anonKey||!window.supabase)return;
 const db=window.supabase.createClient(cfg.url,cfg.anonKey);
 const shopOriginalPhone=state.phone;
+async function loadDynamicCategories(){
+ const {data,error}=await db.from("categories").select("name,slug").eq("is_active",true).order("sort_order").order("name");
+ if(error){console.warn("Catégories non activées",error.message);return}
+ if(!data?.length)return;
+ data.forEach(c=>categoryNames[c.slug]=c.name);
+ const filters=document.querySelector(".filters");
+ if(filters){filters.replaceChildren();for(const c of [{slug:"all",name:"Tous les produits"},...data]){
+ const b=document.createElement("button");b.className="filter"+(state.cat===c.slug?" active":"");b.dataset.category=c.slug;b.textContent=c.name;filters.appendChild(b)}}
+ const nav=document.querySelector(".nav");
+ if(nav){nav.querySelectorAll("[data-category]").forEach(x=>x.remove());for(const c of data){
+ const b=document.createElement("button");b.dataset.category=c.slug;b.textContent=c.name;nav.appendChild(b)}}
+ if(state.cat!=="all"&&!data.some(c=>c.slug===state.cat))state.cat="all";
+}
 function alertError(message){toast(message||"Une erreur est survenue.")}
 async function refreshCatalog(){
  try{
@@ -34,6 +47,7 @@ async function refreshCatalog(){
     }
   }catch(err){console.warn("Product gallery not yet configured.",err)}
   state.phone=settings.data?.whatsapp||shopOriginalPhone;
+  await loadDynamicCategories();
   // Synchroniser la photo de la fiche mise en avant avec le vrai produit.
   const featured=document.getElementById("featured-laptop-n2840");
   if(featured){
