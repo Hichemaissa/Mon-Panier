@@ -260,10 +260,52 @@ body.category-drawer-open{overflow:hidden}
  .front-category-card img{border-radius:10px;aspect-ratio:1.45}
  .front-category-arrow{right:10px;bottom:10px;font-size:21px}
 }
+
+/* Dedicated promotions announcement and photo showcase */
+.promo-topbar{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;padding:11px 18px;background:linear-gradient(105deg,#e95c07,#ff8d26);color:#fff;text-decoration:none;font-size:13px;font-weight:650;text-align:center}
+.promo-topbar-tag{display:inline-flex;align-items:center;padding:4px 9px;border-radius:7px;background:#ffffff28;font-size:12px;font-weight:900;letter-spacing:.03em}
+.promo-topbar strong{font-weight:900;text-decoration:underline;text-underline-offset:3px}
+.promo-topbar:hover{background:linear-gradient(105deg,#c84805,#f27814)}
+.promo-topbar:focus-visible{outline:3px solid #ffbd85;outline-offset:-3px}
+.promotion-section{padding-top:26px;padding-bottom:10px;scroll-margin-top:110px}
+.promotion-section-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:16px}
+.promotion-section-heading h2{font-size:clamp(24px,3vw,32px);margin:4px 0 0;color:#2b2520}
+.promotion-section-heading>span{color:#846e5d;font-size:12px}
+.promotion-showcase{display:grid;grid-template-columns:1.1fr 1fr;overflow:hidden;background:#fff7ed;border:1px solid #f5d4b4;border-radius:23px;box-shadow:0 12px 32px rgba(128,67,20,.08)}
+.promotion-photo{min-height:250px;background:#f7e5d5}
+.promotion-photo img{display:block;width:100%;height:100%;min-height:250px;object-fit:cover}
+.promotion-copy{padding:clamp(19px,3vw,36px);display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.promotion-eyebrow{color:#e35e11;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.promotion-copy h3{font-size:clamp(24px,3vw,36px);line-height:1.17;color:#30241e;margin:11px 0}
+.promotion-copy p{color:#705d50;font-size:14px;line-height:1.6;margin:0 0 20px}
+.promotion-actions{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:17px}
+.promotion-button,.promotion-secondary{display:inline-flex;justify-content:center;align-items:center;gap:8px;border-radius:11px;padding:11px 15px;font-size:13px;font-weight:850;text-decoration:none;cursor:pointer}
+.promotion-button{background:#f26e17;color:white;border:1px solid #f26e17}
+.promotion-secondary{background:white;color:#c45413;border:1px solid #f3c7aa}
+.promotion-button:hover{background:#d85b0d;color:white}
+.promotion-secondary:hover{background:#ffebdc}
+.promotion-copy small{color:#927866;font-size:11px;line-height:1.5}
+@media(max-width:650px){
+ .promo-topbar{gap:6px;padding:9px 10px;font-size:11px}
+ .promo-topbar-tag{font-size:10px}
+ .promo-topbar strong{font-size:11px}
+ .promotion-section{padding-top:18px}
+ .promotion-section-heading>span{display:none}
+ .promotion-showcase{grid-template-columns:1fr;border-radius:16px}
+ .promotion-photo,.promotion-photo img{min-height:0;height:195px}
+ .promotion-copy{padding:18px}
+ .promotion-copy h3{font-size:25px}
+ .promotion-copy p{font-size:13px}
+}
 </style>
 </head>
 <body>
 <div class="announcement">CATALOGUE DÉMONSTRATION · PRODUITS ET PRIX INDICATIFS</div>
+<a class="promo-topbar" href="#promotions" aria-label="Découvrir la rubrique Promotions">
+  <span class="promo-topbar-tag">✨ PROMOTIONS</span>
+  <span>Découvrez notre espace offres et bons plans</span>
+  <strong>Voir les offres <span aria-hidden="true">›</span></strong>
+</a>
 <header class="header">
  <div class="container header-main">
   <div class="header-category-controls">
@@ -308,6 +350,27 @@ body.category-drawer-open{overflow:hidden}
     <img id="main-brand-banner" width="1536" height="1024"
       alt="Mon Panier Informatique — Votre matériel au meilleur prix ! Ordinateurs portables, PC de bureau, accessoires, composants et jeux et logiciels. Qualité, fiabilité, service."
       decoding="async" fetchpriority="high">
+  </div>
+</section>
+<section class="container promotion-section" id="promotions" aria-labelledby="promotionsTitle">
+  <div class="promotion-section-heading">
+    <div><div class="eyebrow">BONS PLANS</div><h2 id="promotionsTitle">Promotions & offres</h2></div>
+    <span>Disponibilité et tarifs à confirmer auprès du vendeur</span>
+  </div>
+  <div class="promotion-showcase">
+    <div class="promotion-photo">
+      <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=1000&h=720&q=85" alt="Photographie réelle d'un ordinateur portable" loading="lazy">
+    </div>
+    <div class="promotion-copy">
+      <span class="promotion-eyebrow">Mon Panier Informatique</span>
+      <h3>Vos prochaines bonnes affaires commencent ici.</h3>
+      <p>Découvrez notre sélection de matériel informatique et contactez-nous pour connaître les promotions disponibles.</p>
+      <div class="promotion-actions">
+        <a href="#products" class="promotion-button">Découvrir les produits <span aria-hidden="true">›</span></a>
+        <button type="button" data-category="laptops" class="promotion-secondary">PC portables</button>
+      </div>
+      <small>Aucune remise annoncée sans confirmation du prix et du stock.</small>
+    </div>
   </div>
 </section>
 <section class="container front-categories" aria-labelledby="frontCategoriesTitle">
