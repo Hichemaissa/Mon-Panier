@@ -565,7 +565,13 @@ function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));re
 function write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
 const state={cat:"all",sort:"default",query:"",favoritesOnly:false,cart:read("monpanier-cart",{}),favorites:new Set(read("monpanier-likes",[])),phone:read("monpanier-phone","213560283892"),custom:read("monpanier-custom",[])};
 const categoryNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires"};
-const allProducts=()=>[...STARTER_PRODUCTS,...state.custom];
+// Fixed sample catalog remains available if the live API returns partial results.
+const CATEGORY_SAMPLES=STARTER_PRODUCTS.map(p=>({...p}));
+const allProducts=()=>{
+ const live=[...STARTER_PRODUCTS,...state.custom];
+ const ids=new Set(live.map(p=>String(p.id)));
+ return [...live,...CATEGORY_SAMPLES.filter(p=>!ids.has(String(p.id)))];
+};
 const getProduct=id=>allProducts().find(x=>x.id===id);
 const fmt=n=>new Intl.NumberFormat("fr-DZ").format(n);
 const priceHTML=p=>`${fmt(p.price)} <span class="currency">DA</span>`;
@@ -607,6 +613,9 @@ function renderProducts(){
     featured.hidden=!(["all","laptops"].includes(state.cat)&&!state.favoritesOnly&&(!q||matches.includes(q)));
   }
  let arr=allProducts().filter(p=>(state.cat==="all"||p.category===state.cat)&&(!state.favoritesOnly||state.favorites.has(p.id))&&(p.name+" "+p.specs+" "+(categoryNames[p.category]||p.category)).toLowerCase().includes(q));
+ // A category is never empty merely because its remote records are not yet available.
+ if(!arr.length && state.cat!=="all" && !q && !state.favoritesOnly)
+   arr=CATEGORY_SAMPLES.filter(p=>p.category===state.cat);
  if(state.sort==="low")arr.sort((a,b)=>a.price-b.price);
  if(state.sort==="high")arr.sort((a,b)=>b.price-a.price);
  if(state.sort==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
