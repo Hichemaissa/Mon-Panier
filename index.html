@@ -368,7 +368,25 @@ body.category-drawer-open{overflow:hidden}
 <style>
 #promoSlider{position:relative;overflow:hidden;border-radius:23px;border:1px solid #ffdec1;background:linear-gradient(115deg,#fff4e8,#fffaf6);box-shadow:0 12px 34px #d2702020}
 #promoSlider .promo-slide{display:none;grid-template-columns:1fr 1fr;align-items:center;min-height:295px}
-#promoSlider .promo-slide.active{display:grid}
+#promoSlider .promo-slide.active{display:grid;animation:promo-enter .52s cubic-bezier(.2,.78,.2,1) both}
+#promoSlider[data-direction="prev"] .promo-slide.active{animation-name:promo-enter-prev}
+@keyframes promo-enter{from{opacity:.3;transform:translateX(38px) scale(.985)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes promo-enter-prev{from{opacity:.3;transform:translateX(-38px) scale(.985)}to{opacity:1;transform:translateX(0) scale(1)}}
+#promoSlider .promo-slide.active img{animation:promo-image-in .65s cubic-bezier(.2,.75,.2,1) both}
+@keyframes promo-image-in{from{opacity:.65;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+#promoSlider .promo-slide.active .promo-offer{animation:promo-copy-in .55s .08s ease-out both}
+@keyframes promo-copy-in{from{opacity:.25;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#promoSlider .promo-progress{height:4px;background:#f4dbc5;overflow:hidden}
+#promoSlider .promo-progress::before{content:"";display:block;width:100%;height:100%;background:linear-gradient(90deg,#f16b13,#ffc06d);transform:scaleX(0);transform-origin:left;animation:promo-progress 4.5s linear infinite;animation-play-state:paused}
+#promoSlider.is-playing .promo-progress::before{animation-play-state:running}
+@keyframes promo-progress{to{transform:scaleX(1)}}
+#promoSlider .promo-nav button{transition:transform .2s ease,background .2s ease,border-color .2s ease}
+#promoSlider .promo-nav button:hover{transform:scale(1.12);background:#ffead8;border-color:#ed8e4d}
+#promoSlider .promo-go{transition:transform .2s ease,background .2s ease}
+#promoSlider .promo-go:hover{transform:translateY(-2px);background:#f16b13}
+#promoSlider .promo-slide{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+#promoSlider .promo-slide a{user-select:auto;-webkit-user-select:auto}
+@media(prefers-reduced-motion:reduce){#promoSlider .promo-slide.active,#promoSlider .promo-slide.active img,#promoSlider .promo-slide.active .promo-offer{animation:none!important}#promoSlider .promo-progress{display:none}#promoSlider .promo-nav button{transition:none}}
 #promoSlider .promo-slide img{width:100%;height:295px;object-fit:contain;padding:18px;background:#fff}
 #promoSlider .promo-offer{padding:27px 38px}
 #promoSlider .promo-offer small{color:#ad5619;font-weight:800;letter-spacing:.06em}
@@ -688,8 +706,19 @@ $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 (function(){
 const root=document.getElementById("promoSlider");if(!root)return;
 const slides=[...root.querySelectorAll(".promo-slide")],dots=[...root.querySelectorAll("[data-promo-dot]")];let pos=0,timer;
-function show(n){pos=(n+slides.length)%slides.length;slides.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-hidden",String(i!==pos))});dots.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-current",String(i===pos))})}
-function stop(){clearInterval(timer)}function play(){stop();if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches)timer=setInterval(()=>show(pos+1),4500)}
+const progress=document.createElement("div");progress.className="promo-progress";progress.setAttribute("aria-hidden","true");root.prepend(progress);
+function show(n){
+ const next=(n+slides.length)%slides.length;if(next===pos)return;
+ root.dataset.direction=(n<pos || (pos===0&&n===-1))?"prev":"next";
+ pos=next;
+ slides.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-hidden",String(i!==pos));el.inert=i!==pos});
+ dots.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-current",String(i===pos))});
+ progress.remove();root.prepend(progress);
+}
+function stop(){clearInterval(timer);root.classList.remove("is-playing")}
+function play(){stop();if(document.hidden||root.matches(":hover")||root.contains(document.activeElement))return;
+ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){root.classList.add("is-playing");progress.remove();root.prepend(progress);timer=setInterval(()=>show(pos+1),4500)}
+}
 root.querySelector("#promoPrev").addEventListener("click",()=>{show(pos-1);play()});root.querySelector("#promoNext").addEventListener("click",()=>{show(pos+1);play()});
 dots.forEach((el,i)=>el.addEventListener("click",()=>{show(i);play()}));
 // Swipe horizontally on phones/tablets; keep vertical page scrolling and links usable.
@@ -710,6 +739,7 @@ root.addEventListener("touchend",e=>{
 },{passive:true});
 root.addEventListener("touchcancel",()=>{touchStarted=false;play()},{passive:true});
 root.addEventListener("mouseenter",stop);root.addEventListener("mouseleave",play);root.addEventListener("focusin",stop);root.addEventListener("focusout",e=>{if(!root.contains(e.relatedTarget))play()});
+root.setAttribute("tabindex","0");root.addEventListener("keydown",e=>{if(e.key==="ArrowLeft"||e.key==="ArrowRight"){e.preventDefault();show(pos+(e.key==="ArrowRight"?1:-1));stop()}});
 document.addEventListener("visibilitychange",()=>document.hidden?stop():play());play();
 })();
 </script>
