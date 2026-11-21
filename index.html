@@ -424,22 +424,22 @@ body.category-drawer-open{overflow:hidden}
 <section class="container front-categories" aria-labelledby="frontCategoriesTitle">
   <div class="front-categories-head"><div><div class="eyebrow">DÉCOUVRIR</div><h2 id="frontCategoriesTitle">Nos catégories</h2></div><span>Choisissez votre univers informatique</span></div>
   <div class="front-category-grid">
-    <button type="button" class="front-category-card" data-category="laptops">
+    <a class="front-category-card" href="?categorie=laptops#products" data-category-link="laptops">
       <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=520&h=340&q=80" alt="Ordinateur portable" loading="lazy">
       <span>PC portables</span><span class="front-category-arrow" aria-hidden="true">›</span>
-    </button>
-    <button type="button" class="front-category-card" data-category="desktops">
+    </a>
+    <a class="front-category-card" href="?categorie=desktops#products" data-category-link="desktops">
       <img src="https://images.unsplash.com/photo-1660855551570-dd44e0ab800c?auto=format&fit=crop&w=520&h=340&q=80" alt="Ordinateur de bureau" loading="lazy">
       <span>PC de bureau</span><span class="front-category-arrow" aria-hidden="true">›</span>
-    </button>
-    <button type="button" class="front-category-card" data-category="screens">
+    </a>
+    <a class="front-category-card" href="?categorie=screens#products" data-category-link="screens">
       <img src="https://images.unsplash.com/photo-1708200216314-455e3487392a?auto=format&fit=crop&w=520&h=340&q=80" alt="Écran d'ordinateur" loading="lazy">
       <span>Écrans</span><span class="front-category-arrow" aria-hidden="true">›</span>
-    </button>
-    <button type="button" class="front-category-card" data-category="accessories">
+    </a>
+    <a class="front-category-card" href="?categorie=accessories#products" data-category-link="accessories">
       <img src="https://images.unsplash.com/photo-1752867494500-9ea9322f58c9?auto=format&fit=crop&w=520&h=340&q=80" alt="Accessoires informatiques" loading="lazy">
       <span>Accessoires</span><span class="front-category-arrow" aria-hidden="true">›</span>
-    </button>
+    </a>
   </div>
 </section>
 <section class="container section products-wrap" id="products">
@@ -563,7 +563,9 @@ const $=(sel,root=document)=>root.querySelector(sel);
 const $$=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
 function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v??fallback}catch{return fallback}}
 function write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
-const state={cat:"all",sort:"default",query:"",favoritesOnly:false,cart:read("monpanier-cart",{}),favorites:new Set(read("monpanier-likes",[])),phone:read("monpanier-phone","213560283892"),custom:read("monpanier-custom",[])};
+const requestedCategory=new URLSearchParams(location.search).get("categorie");
+const initialCategory=["laptops","desktops","screens","accessories"].includes(requestedCategory)?requestedCategory:"all";
+const state={cat:initialCategory,sort:"default",query:"",favoritesOnly:false,cart:read("monpanier-cart",{}),favorites:new Set(read("monpanier-likes",[])),phone:read("monpanier-phone","213560283892"),custom:read("monpanier-custom",[])};
 const categoryNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires"};
 // Fixed sample catalog remains available if the live API returns partial results.
 const CATEGORY_SAMPLES=STARTER_PRODUCTS.map(p=>({...p}));
@@ -619,7 +621,7 @@ function renderProducts(){
  if(state.sort==="low")arr.sort((a,b)=>a.price-b.price);
  if(state.sort==="high")arr.sort((a,b)=>b.price-a.price);
  if(state.sort==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
- $("#resultsHint").textContent=`${arr.length} produits — ${state.favoritesOnly?"Favoris uniquement":"Prix indicatifs"}`;
+ $("#resultsHint").textContent=`${categoryNames[state.cat]||"Tous les produits"} · ${arr.length} produits — ${state.favoritesOnly?"Favoris uniquement":"Prix indicatifs"}`;
  $(".filter,.side-filter").forEach(b=>b.classList.toggle("active",b.dataset.category===state.cat));
  $("#productsGrid").innerHTML=arr.length?arr.map(p=>`<article class="product" data-mp-product="${safe(p.id)}" tabindex="0" role="link" aria-label="Voir le produit ${safe(p.name)}">
  <div class="product-art" data-action="detail" data-id="${p.id}" style="--glow:${p.glow||"#ffe3c2"}"><span class="tag ${p.oldPrice?"sale":""}">${safe(p.badge||"Nouveau")}</span><button class="heart ${state.favorites.has(p.id)?"active":""}" data-action="like" data-id="${p.id}" aria-label="Ajouter aux favoris">${state.favorites.has(p.id)?"♥":"♡"}</button>${art(p)}</div>
@@ -638,10 +640,11 @@ function setCategory(cat){
  ["#searchDesktop","#searchMobile"].forEach(selector=>{const input=$(selector);if(input)input.value=""});
  renderProducts();
  document.querySelectorAll(".front-category-card").forEach(button=>{
-  const current=button.dataset.category===cat;
+  const current=button.dataset.categoryLink===cat;
   button.classList.toggle("active",current);
-  button.setAttribute("aria-pressed",String(current));
+  if(current)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current");
  });
+ const url=new URL(location.href);if(cat==="all")url.searchParams.delete("categorie");else url.searchParams.set("categorie",cat);url.hash="products";history.replaceState(null,"",url);
  $("#products").scrollIntoView({behavior:"smooth",block:"start"});
 }
 function add(id){if(!getProduct(id))return;state.cart[id]=(state.cart[id]||0)+1;write("monpanier-cart",state.cart);updateBadges();renderCart();toast("✓ Produit ajouté au panier")}
