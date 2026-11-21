@@ -25,7 +25,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <section id="dashboard" class="hidden"><h1>Tableau de bord</h1><p>Gérez vos produits, votre stock et les commandes enregistrées sur le site.</p>
 <div class="grid"><div class="stat"><span>Produits actifs</span><strong id="count-products">—</strong></div><div class="stat"><span>Stock faible (≤ 3)</span><strong id="count-low">—</strong></div><div class="stat"><span>Commandes</span><strong id="count-orders">—</strong></div><div class="stat"><span>Montant total non annulé</span><strong id="count-total">—</strong></div></div>
 <div class="flex tabs"><button class="on" data-tab="products">Produits et stock</button><button data-tab="categories">Catégories</button><button data-tab="stock">Stock</button><button data-tab="orders">Commandes</button><button data-tab="settings">Paramètres</button></div>
-<div id="view-products"><div class="panel"><div class="flex between"><h2>Catalogue</h2><button class="primary" id="add">+ Nouveau produit</button></div><div class="flex search-controls"><label>Rechercher<input id="product-search" type="search" placeholder="Nom, catégorie, caractéristiques"></label><label>Catégorie<select id="product-filter"><option value="all">Toutes</option><option value="laptops">PC portables</option><option value="desktops">PC de bureau</option><option value="screens">Écrans</option><option value="accessories">Accessoires</option></select></label></div><div class="scroll"><table><thead><tr><th>Nom</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Visible</th><th>Actions</th></tr></thead><tbody id="product-list"></tbody></table></div></div>
+<div id="view-products"><div class="panel"><div class="flex between"><h2>Catalogue</h2><button class="primary" id="add">+ Nouveau produit</button><button id="seed-suggestions" type="button" title="Ajouter 2 exemples par catégorie, non publiés">+ 8 produits suggérés</button></div><div class="flex search-controls"><label>Rechercher<input id="product-search" type="search" placeholder="Nom, catégorie, caractéristiques"></label><label>Catégorie<select id="product-filter"><option value="all">Toutes</option><option value="laptops">PC portables</option><option value="desktops">PC de bureau</option><option value="screens">Écrans</option><option value="accessories">Accessoires</option></select></label></div><div class="scroll"><table><thead><tr><th>Nom</th><th>Catégorie</th><th>Prix</th><th>Stock</th><th>Visible</th><th>Actions</th></tr></thead><tbody id="product-list"></tbody></table></div></div>
 <div class="panel hidden" id="editor"><h2 id="editor-title">Nouveau produit</h2><form id="product-form"><input id="p-id" type="hidden"><div class="fields"><label>Nom<input id="p-name" required maxlength="120"></label><label>Catégorie<select id="p-category"><option value="laptops">PC portables</option><option value="desktops">PC de bureau</option><option value="screens">Écrans</option><option value="accessories">Accessoires</option></select></label><label>Prix (DA)<input id="p-price" required type="number" min="0" step="0.01"></label><label>Ancien prix (DA)<input id="p-old" type="number" min="0" step="0.01"></label><label>Stock<input id="p-stock" type="number" min="0" step="1" required value="0"></label><label>Badge<input id="p-badge" maxlength="60"></label><label>Caractéristiques<input id="p-specs" maxlength="500"></label><label>Adresse image HTTPS<input id="p-image" type="url"></label><label>Ou image principale<input id="p-upload" type="file" accept="image/jpeg,image/png,image/webp"></label><label>Publier<select id="p-active"><option value="true">Oui</option><option value="false">Non</option></select></label></div>
 <div class="warning hidden" id="gallery-notice">Pour activer les albums de photos, exécutez <code>supabase/migration-product-gallery.sql</code> dans Supabase SQL Editor. Les autres fonctions du catalogue continuent de marcher.</div>
 <div class="fields">
@@ -117,6 +117,36 @@ $("#stock-list").onclick=async event=>{
  button.disabled=true;
  const {error}=await db.from("products").update({stock:amount,updated_at:new Date().toISOString()}).eq("id",button.dataset.stockSave);
  if(error){button.disabled=false;notify(error.message,true)}else{notify("Stock mis à jour.");await load()}
+};
+// Exemples avec photographies réelles d'équipement (photos d'illustration,
+// pas des visuels officiels de modèle). Les prix et stocks restent à définir.
+const SUGGESTED_PRODUCTS=[
+ {id:"suggest-laptop-office",category:"laptops",name:"PC portable bureautique 14 pouces",specs:"Ordinateur portable pour travail et études — caractéristiques à confirmer",art:"laptop",image_url:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1000&auto=format&fit=crop&q=85"},
+ {id:"suggest-laptop-pro",category:"laptops",name:"PC portable professionnel 15 pouces",specs:"Ordinateur portable professionnel — caractéristiques à confirmer",art:"laptop",image_url:"https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=1000&auto=format&fit=crop&q=85"},
+ {id:"suggest-desktop-office",category:"desktops",name:"PC de bureau bureautique",specs:"Unité centrale pour bureautique — configuration à confirmer",art:"desktop",image_url:"https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=1000&auto=format&fit=crop&q=85"},
+ {id:"suggest-desktop-setup",category:"desktops",name:"PC de bureau polyvalent",specs:"Ensemble informatique — configuration à confirmer",art:"desktop",image_url:"https://images.unsplash.com/photo-1527430253228-e93688616381?w=1000&auto=format&fit=crop&q=85"},
+ {id:"suggest-screen-office",category:"screens",name:"Écran bureautique",specs:"Moniteur pour ordinateur — taille et résolution à confirmer",art:"monitor",image_url:"https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=1000&auto=format&fit=crop&q=85"},
+ {id:"suggest-screen-wide",category:"screens",name:"Écran grand format",specs:"Moniteur grand format — taille et résolution à confirmer",art:"monitor",image_url:"https://images.unsplash.com/photo-1547082299-de196ea013d6?w=1000&auto=format&fit=crop&q=85"},
+ {id:"suggest-accessory-keyboard",category:"accessories",name:"Clavier pour ordinateur",specs:"Clavier — modèle et connexion à confirmer",art:"keyboard",image_url:"https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1000&auto=format&fit=crop&q=85"},
+ {id:"suggest-accessory-mouse",category:"accessories",name:"Souris pour ordinateur",specs:"Souris — modèle et connexion à confirmer",art:"mouse",image_url:"https://images.unsplash.com/photo-1527814050087-3793815479db?w=1000&auto=format&fit=crop&q=85"}
+];
+$("#seed-suggestions").onclick=async function(){
+ const btn=this;
+ if(!confirm("Ajouter jusqu'à 8 fiches de démonstration dans votre tableau de bord ? Elles resteront masquées jusqu'à la saisie des vrais prix et stocks."))return;
+ btn.disabled=true;
+ try{
+  const existing=new Set(store.products.map(p=>p.id));
+  const rows=SUGGESTED_PRODUCTS.filter(p=>!existing.has(p.id)).map(p=>({
+   ...p,price:0,old_price:null,badge:"À compléter",stock:0,
+   is_active:false,image_urls:[],color:"#f58227",glow:"#ffe0b9"
+  }));
+  if(!rows.length){notify("Les 8 produits suggérés existent déjà.");return}
+  const {error}=await db.from("products").insert(rows);
+  if(error)throw error;
+  notify(rows.length+" produits ajoutés en brouillon. Vérifiez photos, références, prix et stock avant publication.");
+  await load();
+ }catch(e){notify(e.message||"Impossible d'ajouter les produits.",true)}
+ finally{btn.disabled=false}
 };
 $("#add").onclick=()=>edit(null);
 $("#cancel").onclick=()=>$("#editor").classList.add("hidden");
