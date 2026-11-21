@@ -4,7 +4,12 @@
 (function(){
 "use strict";
 const cfg=window.MONPANIER_SUPABASE||{};
-if(!cfg.url||!cfg.anonKey||!window.supabase)return;
+if(!cfg.url||!cfg.anonKey||!window.supabase){
+ // Show demo products even if Supabase configuration or CDN is unavailable.
+ const examples=window.MONPANIER_DEMO_PRODUCTS||[];
+ if(examples.length){STARTER_PRODUCTS.splice(0,STARTER_PRODUCTS.length);state.custom=examples;renderProducts();renderCart();}
+ return;
+}
 const db=window.supabase.createClient(cfg.url,cfg.anonKey);
 const shopOriginalPhone=state.phone;
 // Catalogue de présentation : utilisé seulement si Supabase ne renvoie aucun
@@ -30,6 +35,7 @@ async function loadDynamicCategories(){
  const {data,error}=await db.from("categories").select("name,slug").eq("is_active",true).order("sort_order").order("name");
  if(error){console.warn("Catégories non activées",error.message);return}
  if(!data?.length)return;
+ if(!data.some(c=>c.slug==="screens"))data.push({slug:"screens",name:"Écrans"});
  data.forEach(c=>categoryNames[c.slug]=c.name);
  const filters=document.querySelector(".filters");
  if(filters){filters.replaceChildren();for(const c of [{slug:"all",name:"Tous les produits"},...data]){
@@ -56,7 +62,11 @@ async function refreshCatalog(){
    badge:p.badge||"",art:p.art||"laptop",color:p.color||"#f58227",
    glow:p.glow||"#ffe0b9",image_url:p.image_url||"",stock:p.stock
   }));
-  if(!state.custom.length)showDisplayFallback();
+  // Keep all eight illustrated showcase products visible alongside genuine published items.
+  // Existing database products take priority when identifiers match.
+  const liveIds=new Set(state.custom.map(p=>p.id));
+  state.custom.push(...DISPLAY_FALLBACK.filter(p=>!liveIds.has(p.id)).map(p=>({...p,badge:"Démonstration · prix indicatif",oldPrice:null,color:"#f58227",glow:"#ffe0b9"})));
+  categoryNames.screens=categoryNames.screens||"Écrans";
   // Optional migration: additional photo URLs for the product detail gallery.
   // Keep the live catalogue usable if the owner has not applied the migration yet.
   try {
