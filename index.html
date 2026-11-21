@@ -240,6 +240,26 @@ body.category-drawer-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
  .header-category-controls #sideCategoriesPanel,.header-category-controls .category-backdrop{transition:none!important}
 }
+
+/* Browsable category cards directly on the storefront homepage. */
+.front-categories{padding-top:26px;padding-bottom:16px}
+.front-categories-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}
+.front-categories-head h2{margin:3px 0 0;font-size:clamp(23px,3vw,30px);color:#2b2520}
+.front-categories-head>span{font-size:12px;color:#80685a}
+.front-category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.front-category-card{position:relative;display:flex;flex-direction:column;align-items:start;gap:12px;min-width:0;padding:11px 11px 15px;background:#fff;border:1px solid #f0e0d2;border-radius:18px;color:#3b2d23;font-size:15px;font-weight:850;text-align:left;cursor:pointer;box-shadow:0 8px 24px rgba(104,60,24,.07);transition:transform .2s,box-shadow .2s,border-color .2s}
+.front-category-card:hover{transform:translateY(-3px);border-color:#ffac70;box-shadow:0 12px 30px rgba(104,60,24,.14)}
+.front-category-card:focus-visible{outline:3px solid #ff9c47;outline-offset:3px}
+.front-category-card img{display:block;width:100%;aspect-ratio:1.45;object-fit:cover;background:#f7e9dc;border-radius:13px}
+.front-category-arrow{position:absolute;right:13px;bottom:13px;color:#f17113;font-size:24px;font-weight:700;line-height:1}
+@media(max-width:700px){
+ .front-categories{padding-top:19px;padding-bottom:12px}
+ .front-categories-head>span{display:none}
+ .front-category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .front-category-card{padding:8px 8px 12px;border-radius:14px;gap:9px;font-size:12px}
+ .front-category-card img{border-radius:10px;aspect-ratio:1.45}
+ .front-category-arrow{right:10px;bottom:10px;font-size:21px}
+}
 </style>
 </head>
 <body>
@@ -288,6 +308,27 @@ body.category-drawer-open{overflow:hidden}
     <img id="main-brand-banner" width="1536" height="1024"
       alt="Mon Panier Informatique — Votre matériel au meilleur prix ! Ordinateurs portables, PC de bureau, accessoires, composants et jeux et logiciels. Qualité, fiabilité, service."
       decoding="async" fetchpriority="high">
+  </div>
+</section>
+<section class="container front-categories" aria-labelledby="frontCategoriesTitle">
+  <div class="front-categories-head"><div><div class="eyebrow">DÉCOUVRIR</div><h2 id="frontCategoriesTitle">Nos catégories</h2></div><span>Choisissez votre univers informatique</span></div>
+  <div class="front-category-grid">
+    <button type="button" class="front-category-card" data-category="laptops">
+      <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=520&h=340&q=80" alt="Ordinateur portable" loading="lazy">
+      <span>PC portables</span><span class="front-category-arrow" aria-hidden="true">›</span>
+    </button>
+    <button type="button" class="front-category-card" data-category="desktops">
+      <img src="https://images.unsplash.com/photo-1660855551570-dd44e0ab800c?auto=format&fit=crop&w=520&h=340&q=80" alt="Ordinateur de bureau" loading="lazy">
+      <span>PC de bureau</span><span class="front-category-arrow" aria-hidden="true">›</span>
+    </button>
+    <button type="button" class="front-category-card" data-category="screens">
+      <img src="https://images.unsplash.com/photo-1708200216314-455e3487392a?auto=format&fit=crop&w=520&h=340&q=80" alt="Écran d'ordinateur" loading="lazy">
+      <span>Écrans</span><span class="front-category-arrow" aria-hidden="true">›</span>
+    </button>
+    <button type="button" class="front-category-card" data-category="accessories">
+      <img src="https://images.unsplash.com/photo-1752867494500-9ea9322f58c9?auto=format&fit=crop&w=520&h=340&q=80" alt="Accessoires informatiques" loading="lazy">
+      <span>Accessoires</span><span class="front-category-arrow" aria-hidden="true">›</span>
+    </button>
   </div>
 </section>
 <section class="container section products-wrap" id="products">
