@@ -140,7 +140,7 @@ footer{margin-top:65px}
 
 /* Product categories: collapsible photo sidebar. */
 .category-menu-toggle{display:inline-flex;align-items:center;gap:8px;background:#ff7617;border:1px solid #f36c10;color:white;border-radius:12px;font-size:13px;font-weight:850;padding:8px 15px;margin-bottom:12px;min-height:42px}
-.category-menu-toggle .category-dots{font-size:24px;line-height:1;display:inline-block;margin-left:4px}
+.category-menu-toggle .category-dots{font-size:32px;font-weight:900;line-height:1;display:inline-block;margin:0}
 .category-menu-toggle[aria-expanded="true"]{background:#32251f;border-color:#32251f}
 .category-menu-toggle:focus-visible{outline:3px solid #ffb774;outline-offset:3px}
 .shop-layout.categories-closed{grid-template-columns:minmax(0,1fr)}
@@ -171,12 +171,12 @@ footer{margin-top:65px}
 .header-category-controls .shop-sidebar .side-list{display:flex;flex-direction:column;gap:5px}
 .shop-layout,.shop-layout.categories-closed{grid-template-columns:minmax(0,1fr)}
 @media(max-width:650px){
- .header-category-controls .category-menu-toggle{font-size:11px;padding:6px 8px;min-height:36px;gap:4px;border-radius:9px}
+ .header-category-controls .category-menu-toggle{font-size:11px;padding:5px 12px;min-width:42px;min-height:42px;justify-content:center;border-radius:11px}
  .header-category-controls{order:0;flex-shrink:0}
  .header-main>.brand{order:1;min-width:0}
  .header-main>.actions{order:3;margin-left:auto}
  .header-category-controls .shop-sidebar{left:0;right:auto}
- .header-category-controls .category-dots{font-size:19px}
+ .header-category-controls .category-dots{font-size:30px}
  .header-category-controls .shop-sidebar{position:absolute;top:calc(100% + 10px);left:auto;right:-55px;width:214px;padding:12px 9px;max-height:65vh}
  .header-category-controls .shop-sidebar .side-filter{display:flex;flex-direction:row;text-align:left;font-size:12px;padding:9px 8px;gap:9px;align-items:center}
  .header-category-controls .shop-sidebar .side-photo{width:38px;height:38px}
@@ -193,7 +193,7 @@ footer{margin-top:65px}
  <div class="container header-main">
   <div class="header-category-controls">
   <button type="button" id="categoryToggle" class="category-menu-toggle" aria-expanded="false" aria-controls="sideCategoriesPanel" aria-label="Afficher les catégories">
-    <span>Catégories</span><span aria-hidden="true" class="category-dots">⋮</span>
+    <span aria-hidden="true" class="category-dots">⋮</span>
   </button>
   <aside class="shop-sidebar" id="sideCategoriesPanel" aria-label="Catégories des produits" hidden>
     <h3>Catégories</h3>
