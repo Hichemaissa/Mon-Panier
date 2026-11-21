@@ -31,11 +31,22 @@ function showDisplayFallback(){
  renderProducts();renderCart();
 }
 
+// Keep database categories compatible with the four storefront filters.
+function normalizeCategory(value){
+ const v=String(value||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+ if(["laptops","laptop","pc-portables","pc_portables","pc portable","ordinateurs portables","portable","portables"].includes(v))return "laptops";
+ if(["desktops","desktop","pc-de-bureau","pc_de_bureau","pc de bureau","ordinateurs de bureau","computers","ordinateurs"].includes(v))return "desktops";
+ if(["screens","screen","ecrans","ecran","monitors","monitor","moniteurs"].includes(v))return "screens";
+ if(["accessories","accessory","accessoires","accessoire","peripheriques"].includes(v))return "accessories";
+ return v;
+}
 async function loadDynamicCategories(){
  const {data,error}=await db.from("categories").select("name,slug").eq("is_active",true).order("sort_order").order("name");
  if(error){console.warn("Catégories non activées",error.message);return}
  if(!data?.length)return;
- if(!data.some(c=>c.slug==="screens"))data.push({slug:"screens",name:"Écrans"});
+ const allowed=["laptops","desktops","screens","accessories"];
+ const fixedNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires"};
+ data.splice(0,data.length,...allowed.map(slug=>({slug,name:fixedNames[slug]})));
  data.forEach(c=>categoryNames[c.slug]=c.name);
  const filters=document.querySelector(".filters");
  if(filters){filters.replaceChildren();for(const c of [{slug:"all",name:"Tous les produits"},...data]){
@@ -57,7 +68,7 @@ async function refreshCatalog(){
   // Remove all demonstration products in database mode.
   STARTER_PRODUCTS.splice(0,STARTER_PRODUCTS.length);
   state.custom=(prod.data||[]).map(p=>({
-   id:p.id,category:p.category,name:p.name,specs:p.specs||"",price:Number(p.price),
+   id:p.id,category:normalizeCategory(p.category),name:p.name,specs:p.specs||"",price:Number(p.price),
    oldPrice:p.old_price===null?null:Number(p.old_price),
    badge:p.badge||"",art:p.art||"laptop",color:p.color||"#f58227",
    glow:p.glow||"#ffe0b9",image_url:p.image_url||"",stock:p.stock
