@@ -185,6 +185,28 @@ footer{margin-top:65px}
 /* The product card itself is clickable; controls inside remain independent. */
 .product[data-mp-product],.featured-laptop[data-mp-product]{cursor:pointer}
 .product[data-mp-product]:focus-visible,.featured-laptop[data-mp-product]:focus-visible{outline:3px solid #ff831c;outline-offset:4px}
+
+/* Left-to-right slide-out drawer for the three-dot categories button. */
+.header-category-controls #sideCategoriesPanel{
+ position:fixed;top:82px;left:0;right:auto;width:min(290px,85vw);
+ max-width:85vw;height:calc(100dvh - 82px);max-height:none;
+ margin:0;padding:20px 14px;overflow-y:auto;z-index:40;
+ border-radius:0 18px 18px 0;
+ transform:translateX(calc(-100% - 16px));opacity:0;visibility:hidden;
+ pointer-events:none;
+ box-shadow:12px 12px 36px rgba(54,35,20,.17);
+ transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .24s ease,visibility 0s linear .3s;
+}
+.header-category-controls #sideCategoriesPanel.is-open{
+ transform:translateX(0);opacity:1;visibility:visible;pointer-events:auto;
+ transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .24s ease,visibility 0s;
+}
+@media(max-width:650px){
+ .header-category-controls #sideCategoriesPanel{position:fixed;left:0;right:auto;top:72px;width:min(260px,85vw);height:calc(100dvh - 72px);max-height:none;padding:16px 10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .header-category-controls #sideCategoriesPanel{transition:none}
+}
 </style>
 </head>
 <body>
@@ -195,7 +217,7 @@ footer{margin-top:65px}
   <button type="button" id="categoryToggle" class="category-menu-toggle" aria-expanded="false" aria-controls="sideCategoriesPanel" aria-label="Afficher les catégories">
     <span aria-hidden="true" class="category-dots">⋮</span>
   </button>
-  <aside class="shop-sidebar" id="sideCategoriesPanel" aria-label="Catégories des produits" hidden>
+  <aside class="shop-sidebar" id="sideCategoriesPanel" aria-label="Catégories des produits" aria-hidden="true">
     <h3>Catégories</h3>
     <div class="side-list" id="sideCategories">
       <button class="side-filter active" data-category="all"><span class="side-icon">🛍️</span>Tous les produits</button>
@@ -454,13 +476,17 @@ $("#sortSelect").addEventListener("change",e=>{state.sort=e.target.value;renderP
 $("#settingsForm").addEventListener("submit",e=>{e.preventDefault();const value=$("#shopPhone").value.replace(/\D/g,"");if(value&&!(value.length>=9&&value.length<=15)){toast("Saisissez un numéro avec l’indicatif du pays.");return}state.phone=value;write("monpanier-phone",value);closeAll();toast(value?"Numéro WhatsApp enregistré ✓":"Numéro WhatsApp effacé")});
 $("#newProductForm").addEventListener("submit",e=>{e.preventDefault();const name=$("#newName").value.trim(),cat=$("#newCat").value,price=Number($("#newPrice").value),specs=$("#newSpecs").value.trim();if(!name||!categoryNames[cat]||!(price>0&&price<=1e8)){toast("Vérifiez les informations du produit.");return}const colors={laptops:"#409ed5",desktops:"#e17d37",screens:"#ff7617",accessories:"#9070d6"},artNames={laptops:"laptop",desktops:"desktop",screens:"aio",accessories:"keyboard"};state.custom.push({id:"u"+Date.now().toString(36),name,category:cat,price,specs:specs||"Nouveau produit",badge:"Ajouté",art:artNames[cat],color:colors[cat],glow:"#d4eaf0"});write("monpanier-custom",state.custom);$("#newProductForm").reset();state.cat=cat;renderProducts();closeAll();toast("Produit ajouté localement ✓");$("#products").scrollIntoView({behavior:"smooth"})});
 const categoryToggle=$("#categoryToggle"), categoryPanel=$("#sideCategoriesPanel"), shopLayout=$("#shopLayout");
-categoryToggle.addEventListener("click",()=>{
- const show=categoryPanel.hidden;
- categoryPanel.hidden=!show;
+function setCategoriesOpen(show){
+ categoryPanel.classList.toggle("is-open",show);
+ categoryPanel.setAttribute("aria-hidden",String(!show));
  categoryToggle.setAttribute("aria-expanded",String(show));
  categoryToggle.setAttribute("aria-label",show?"Masquer les catégories":"Afficher les catégories");
  shopLayout.classList.toggle("categories-closed",!show);
-});
+}
+categoryToggle.addEventListener("click",()=>setCategoriesOpen(!categoryPanel.classList.contains("is-open")));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&categoryPanel.classList.contains("is-open")){setCategoriesOpen(false);categoryToggle.focus();}});
+document.addEventListener("click",e=>{if(categoryPanel.classList.contains("is-open")&&!e.target.closest(".header-category-controls"))setCategoriesOpen(false);});
+categoryPanel.querySelectorAll(".side-filter").forEach(b=>b.addEventListener("click",()=>setCategoriesOpen(false)));
 $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
