@@ -664,7 +664,8 @@ function openDialog(id){closeAll();openBackdrop();$("#"+id).classList.add("show"
 function detail(id){const p=getProduct(id);if(!p)return;$("#detailBody").innerHTML=`<div class="art-large">${art(p)}</div><span class="eyebrow">${categoryNames[p.category]}</span><h3 style="margin:6px 0">${safe(p.name)}</h3><p style="font-size:12px;color:#65778a">Produit de démonstration · Prix et disponibilité à confirmer.</p><div class="details-spec">${safe(p.specs).split("•").map(s=>`<span>${s.trim()}</span>`).join("")}</div><div class="price" style="margin:11px 0">${priceHTML(p)}</div><button class="btn btn-primary full" data-action="add" data-id="${p.id}">+ Ajouter au panier</button>`;openDialog("detailDialog")}
 function contact(){if(!state.phone){openDialog("settingsDialog");toast("Renseignez un numéro de contact.");return}window.open(`https://wa.me/${state.phone}?text=${encodeURIComponent("Bonjour, je souhaite obtenir des informations sur les produits Mon Panier Informatique.")}`,"_blank","noopener,noreferrer")}
 document.addEventListener("click",e=>{
- const btn=e.target.closest("[data-action],[data-category]");if(!btn)return;
+ const btn=e.target.closest("[data-action],[data-category],[data-category-link]");if(!btn)return;
+ if(btn.dataset.categoryLink){e.preventDefault();setCategory(btn.dataset.categoryLink);return}
  if(btn.dataset.category){e.preventDefault();setCategory(btn.dataset.category);return}
  const a=btn.dataset.action,id=btn.dataset.id;
  if(a==="cart")openDrawer();if(a==="close")closeAll();if(a==="settings"){$("#shopPhone").value=state.phone;openDialog("settingsDialog")}
