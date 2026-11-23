@@ -433,6 +433,7 @@ body.category-drawer-open{overflow:hidden}
       <img src="https://images.unsplash.com/photo-1752867494500-9ea9322f58c9?auto=format&fit=crop&w=520&h=340&q=80" alt="Accessoires informatiques" loading="lazy">
       <span>Accessoires</span><span class="front-category-arrow" aria-hidden="true">›</span>
     </a>
+    <a class="front-category-card" href="?categorie=printers#products" data-category-link="printers"><img src="https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1000&auto=format&fit=crop&q=85" alt="Imprimantes" loading="lazy"><span>Imprimantes</span><span class="front-category-arrow" aria-hidden="true">›</span></a>
   </div>
 </section>
 <section class="container section products-wrap" id="products">
@@ -445,7 +446,7 @@ body.category-drawer-open{overflow:hidden}
       <button class="filter" data-category="laptops">💻 PC portables</button>
       <button class="filter" data-category="desktops">🖥️ PC de bureau</button>
       <button class="filter" data-category="screens">🖥️ Écrans</button>
-      <button class="filter" data-category="accessories">🎧 Accessoires</button>
+      <button class="filter" data-category="accessories">🎧 Accessoires</button><button class="filter" data-category="printers">🖨️ Imprimantes</button>
     </div>
     <select class="sort" id="sortSelect" aria-label="Trier les produits">
       <option value="default">Trier : sélection</option><option value="low">Prix croissant</option><option value="high">Prix décroissant</option><option value="name">Nom : A à Z</option>
@@ -558,6 +559,8 @@ body.category-drawer-open{overflow:hidden}
 <script>
 "use strict";
 const STARTER_PRODUCTS=[
+{"id":"demo-epson-l3250","category":"printers","name":"Epson EcoTank L3250","specs":"Multifonction à réservoirs d’encre • Wi-Fi • Démonstration","price":59000,"oldPrice":null,"badge":"Démo · prix indicatif","stock":0,"art":"printer","color":"#f58227","glow":"#ffe0b9","image_url":"https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1000&auto=format&fit=crop&q=85","gallery":["https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1000&auto=format&fit=crop&q=85&crop=center","https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1000&auto=format&fit=crop&q=85&crop=left","https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1000&auto=format&fit=crop&q=85&crop=right","https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1000&auto=format&fit=crop&q=85&crop=top","https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=1000&auto=format&fit=crop&q=85&crop=bottom"]},
+{"id":"demo-hp-m404dn","category":"printers","name":"HP LaserJet Pro M404dn","specs":"Laser monochrome • Ethernet • Démonstration","price":68000,"oldPrice":null,"badge":"Démo · prix indicatif","stock":0,"art":"printer","color":"#f58227","glow":"#ffe0b9","image_url":"https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=1000&auto=format&fit=crop&q=85","gallery":["https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=1000&auto=format&fit=crop&q=85&crop=center","https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=1000&auto=format&fit=crop&q=85&crop=left","https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=1000&auto=format&fit=crop&q=85&crop=right","https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=1000&auto=format&fit=crop&q=85&crop=top","https://images.unsplash.com/photo-1562240020-ce31ccb0fa7d?w=1000&auto=format&fit=crop&q=85&crop=bottom"]},
 {"id":"suggest-laptop-office","category":"laptops","name":"PC Portable 14 pouces","specs":"Référence à confirmer","price":69000,"oldPrice":null,"badge":"Démonstration · prix indicatif","stock":0,"art":"laptop","color":"#f58227","glow":"#ffe0b9","image_url":"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=1000&auto=format&fit=crop&q=85"},
 {"id":"suggest-laptop-pro","category":"laptops","name":"PC Portable Pro 15 pouces","specs":"Référence à confirmer","price":119000,"oldPrice":null,"badge":"Démonstration · prix indicatif","stock":0,"art":"laptop","color":"#f58227","glow":"#ffe0b9","image_url":"https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=1000&auto=format&fit=crop&q=85"},
 {"id":"suggest-desktop-office","category":"desktops","name":"PC Bureautique","specs":"Référence à confirmer","price":58000,"oldPrice":null,"badge":"Démonstration · prix indicatif","stock":0,"art":"desktop","color":"#f58227","glow":"#ffe0b9","image_url":"https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=1000&auto=format&fit=crop&q=85"},
@@ -572,9 +575,9 @@ const $$=(sel,root=document)=>Array.from(root.querySelectorAll(sel));
 function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));return v??fallback}catch{return fallback}}
 function write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
 const requestedCategory=new URLSearchParams(location.search).get("categorie");
-const initialCategory=["laptops","desktops","screens","accessories"].includes(requestedCategory)?requestedCategory:"all";
+const initialCategory=["laptops","desktops","screens","accessories","printers"].includes(requestedCategory)?requestedCategory:"all";
 const state={cat:initialCategory,sort:"default",query:"",favoritesOnly:false,cart:read("monpanier-cart",{}),favorites:new Set(read("monpanier-likes",[])),phone:read("monpanier-phone","213560283892"),custom:read("monpanier-custom",[])};
-const categoryNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires"};
+const categoryNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires",printers:"Imprimantes"};
 // Fixed sample catalog remains available if the live API returns partial results.
 const CATEGORY_SAMPLES=STARTER_PRODUCTS.map(p=>({...p}));
 const allProducts=()=>{
@@ -676,9 +679,9 @@ function openBackdrop(){document.body.style.overflow="hidden";$("#overlay").clas
 function closeAll(){$(".drawer.show")?.classList.remove("show");$$(".dialog.show").forEach(el=>el.classList.remove("show"));$("#overlay").classList.remove("show");document.body.style.overflow=""}
 function openDrawer(){closeAll();renderCart();openBackdrop();$("#cartDrawer").classList.add("show")}
 function openDialog(id){closeAll();openBackdrop();$("#"+id).classList.add("show")}
-function detail(id){const p=getProduct(id);if(!p)return;$("#detailBody").innerHTML=`<div class="art-large">${art(p)}</div><span class="eyebrow">${categoryNames[p.category]}</span><h3 style="margin:6px 0">${safe(p.name)}</h3><p style="font-size:12px;color:#65778a">Produit de démonstration · Prix et disponibilité à confirmer.</p><div class="details-spec">${safe(p.specs).split("•").map(s=>`<span>${s.trim()}</span>`).join("")}</div><div class="price" style="margin:11px 0">${priceHTML(p)}</div><button class="btn btn-primary full" data-action="add" data-id="${p.id}">+ Ajouter au panier</button>`;openDialog("detailDialog")}
+function detail(id){const p=getProduct(id);if(!p)return;const gallery=Array.isArray(p.gallery)?`<div class="printer-gallery" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:8px 0 15px">${p.gallery.map((url,i)=>`<button type="button" data-printer-image="${safe(url)}" aria-label="Vue ${i+1}" style="border:1px solid #ddd;border-radius:9px;padding:3px;background:white"><img src="${safe(url)}" alt="Vue ${i+1} de ${safe(p.name)}" style="width:100%;aspect-ratio:1;object-fit:contain"></button>`).join("")}</div>`:"";$("#detailBody").innerHTML=`<div class="art-large" id="detailMainArt">${art(p)}</div>${gallery}<span class="eyebrow">${categoryNames[p.category]}</span><h3 style="margin:6px 0">${safe(p.name)}</h3><p style="font-size:12px;color:#65778a">Produit de démonstration · Prix et disponibilité à confirmer.</p><div class="details-spec">${safe(p.specs).split("•").map(s=>`<span>${s.trim()}</span>`).join("")}</div><div class="price" style="margin:11px 0">${priceHTML(p)}</div><button class="btn btn-primary full" data-action="add" data-id="${p.id}">+ Ajouter au panier</button>`;openDialog("detailDialog")}
 function contact(){if(!state.phone){openDialog("settingsDialog");toast("Renseignez un numéro de contact.");return}window.open(`https://wa.me/${state.phone}?text=${encodeURIComponent("Bonjour, je souhaite obtenir des informations sur les produits Mon Panier Informatique.")}`,"_blank","noopener,noreferrer")}
-document.addEventListener("click",e=>{
+document.addEventListener("click",e=>{const thumb=e.target.closest("[data-printer-image]");if(thumb){const main=$("#detailMainArt img");if(main)main.src=thumb.dataset.printerImage;return;}
  const btn=e.target.closest("[data-action],[data-category],[data-category-link]");if(!btn)return;
  if(btn.dataset.categoryLink){e.preventDefault();setCategory(btn.dataset.categoryLink);return}
  if(btn.dataset.category){e.preventDefault();setCategory(btn.dataset.category);return}
