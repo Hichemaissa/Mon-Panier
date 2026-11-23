@@ -615,7 +615,7 @@ function renderProducts(){
  if(state.sort==="high")arr.sort((a,b)=>b.price-a.price);
  if(state.sort==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
  $("#resultsHint").textContent=`${categoryNames[state.cat]||"Tous les produits"} · ${arr.length} produits — ${state.favoritesOnly?"Favoris uniquement":"Prix indicatifs"}`;
- $(".filter,.side-filter").forEach(b=>b.classList.toggle("active",b.dataset.category===state.cat));
+ $$(".filter,.side-filter").forEach(b=>b.classList.toggle("active",b.dataset.category===state.cat));
  $("#productsGrid").innerHTML=arr.length?arr.map(p=>`<article class="product" data-mp-product="${safe(p.id)}" tabindex="0" role="link" aria-label="Voir le produit ${safe(p.name)}">
  <div class="product-art" data-action="detail" data-id="${p.id}" style="--glow:${p.glow||"#ffe3c2"}"><span class="tag ${p.oldPrice?"sale":""}">${safe(p.badge||"Nouveau")}</span><button class="heart ${state.favorites.has(p.id)?"active":""}" data-action="like" data-id="${p.id}" aria-label="Ajouter aux favoris">${state.favorites.has(p.id)?"♥":"♡"}</button>${art(p)}</div>
  <div class="product-content"><div class="product-category">${categoryNames[p.category]}</div><h3 class="product-name">${safe(p.name)}</h3><div class="product-specs">${safe(p.specs)}</div>
