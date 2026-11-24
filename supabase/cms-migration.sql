@@ -120,6 +120,17 @@ drop policy if exists navigation_admin_all on public.navigation_items;
 create policy navigation_admin_all on public.navigation_items for all to authenticated
  using (public.is_shop_admin()) with check (public.is_shop_admin());
 
+-- Restore Data API table privileges for the dashboard without bypassing RLS.
+-- Existing policies continue to restrict private data and writes to shop admins.
+grant usage on schema public to anon, authenticated;
+grant select on public.products, public.shop_settings to anon, authenticated;
+grant select on public.admin_users, public.orders, public.order_items to authenticated;
+grant insert, update, delete on public.products to authenticated;
+grant update on public.orders, public.shop_settings to authenticated;
+
+-- Ask PostgREST to refresh its schema cache after the migration commits.
+notify pgrst, 'reload schema';
+
 -- IMPORTANT: apply migration in Supabase SQL Editor then update admin.html and
 -- storefront scripts to use these tables. Adding tables alone doesn't activate UI.
 
