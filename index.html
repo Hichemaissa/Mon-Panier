@@ -378,6 +378,9 @@ body.category-drawer-open{overflow:hidden}
 </header>
 <main>
 
+<section class="container" id="promotions" hidden style="padding-top:24px">
+<style>#promoSlider{position:relative;border-radius:24px;background:#fff;border:1px solid var(--line);overflow:hidden}#promoSlider .live-slide{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px;padding:24px 50px;min-height:250px}#promoSlider .live-media{height:230px;display:grid;place-items:center;overflow:hidden}#promoSlider .live-media img,#promoSlider .live-media svg{width:100%;height:100%;object-fit:contain}#promoSlider h3{font-size:clamp(20px,3vw,32px);line-height:1.2;margin:0}#promoSlider strong{display:inline-block;font-size:23px;margin-bottom:12px}#promoSlider .live-prev,#promoSlider .live-next{position:absolute;top:50%;transform:translateY(-50%);border:0;border-radius:50%;width:34px;height:34px;background:#ff9a3d;font-size:23px}#promoSlider .live-prev{left:8px}#promoSlider .live-next{right:8px}@media(max-width:600px){#promoSlider .live-slide{grid-template-columns:1fr;padding:16px 42px;gap:12px}#promoSlider .live-media{height:160px}}</style>
+<h2>Produits à découvrir</h2><div id="promoSlider" aria-roledescription="carousel" aria-label="Produits du catalogue"><div class="live-slide" aria-live="polite"></div><button class="live-prev" type="button" aria-label="Produit précédent">‹</button><button class="live-next" type="button" aria-label="Produit suivant">›</button></div></section>
 <section class="container front-categories" aria-labelledby="frontCategoriesTitle">
   <div class="front-categories-head"><div><div class="eyebrow">DÉCOUVRIR</div><h2 id="frontCategoriesTitle">Nos catégories</h2></div><span>Choisissez votre univers informatique</span></div>
   <div class="front-category-grid">
@@ -652,42 +655,11 @@ $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 <script src="./product-pages.js"></script>
 <script>
 (function(){
-const root=document.getElementById("promoSlider");if(!root)return;
-const slides=[...root.querySelectorAll(".promo-slide")],dots=[...root.querySelectorAll("[data-promo-dot]")];let pos=0,timer;
-const progress=document.createElement("div");progress.className="promo-progress";progress.setAttribute("aria-hidden","true");root.prepend(progress);
-function show(n){
- const next=(n+slides.length)%slides.length;if(next===pos)return;
- root.dataset.direction=(n<pos || (pos===0&&n===-1))?"prev":"next";
- pos=next;
- slides.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-hidden",String(i!==pos));el.inert=i!==pos});
- dots.forEach((el,i)=>{el.classList.toggle("active",i===pos);el.setAttribute("aria-current",String(i===pos))});
- progress.remove();root.prepend(progress);
-}
-function stop(){clearInterval(timer);root.classList.remove("is-playing")}
-function play(){stop();}
-root.querySelector("#promoPrev").addEventListener("click",()=>{show(pos-1);play()});root.querySelector("#promoNext").addEventListener("click",()=>{show(pos+1);play()});
-dots.forEach((el,i)=>el.addEventListener("click",()=>{show(i);play()}));
-// Swipe horizontally on phones/tablets; keep vertical page scrolling and links usable.
-let touchStartX=0,touchStartY=0,touchStarted=false;
-root.addEventListener("touchstart",e=>{
- if(e.touches.length!==1)return;
- touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;
- touchStarted=true;stop();
-},{passive:true});
-root.addEventListener("touchend",e=>{
- if(!touchStarted)return;touchStarted=false;
- const dx=e.changedTouches[0].clientX-touchStartX;
- const dy=e.changedTouches[0].clientY-touchStartY;
- if(Math.abs(dx)>=45&&Math.abs(dx)>Math.abs(dy)*1.2){
-  show(pos+(dx<0?1:-1));
- }
- play();
-},{passive:true});
-root.addEventListener("touchcancel",()=>{touchStarted=false;play()},{passive:true});
-let mouseStart=null;root.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button===0&&!e.target.closest("button,a"))mouseStart=e.clientX});window.addEventListener("pointerup",e=>{if(mouseStart===null)return;const dx=e.clientX-mouseStart;mouseStart=null;if(Math.abs(dx)>=45)show(pos+(dx<0?1:-1))});root.addEventListener("dragstart",e=>e.preventDefault());
-root.addEventListener("mouseenter",stop);root.addEventListener("mouseleave",play);root.addEventListener("focusin",stop);root.addEventListener("focusout",e=>{if(!root.contains(e.relatedTarget))play()});
-root.setAttribute("tabindex","0");root.addEventListener("keydown",e=>{if(e.key==="ArrowLeft"||e.key==="ArrowRight"){e.preventDefault();show(pos+(e.key==="ArrowRight"?1:-1));stop()}});
-document.addEventListener("visibilitychange",()=>document.hidden?stop():play());play();
+ const root=document.getElementById("promoSlider"), section=root.closest("section"), track=root.querySelector(".live-slide"), prev=root.querySelector(".live-prev"), next=root.querySelector(".live-next");let items=[],pos=0;
+ function show(){if(!items.length){section.hidden=true;return}section.hidden=false;const p=items[pos];track.replaceChildren();const media=document.createElement("div");media.className="live-media";media.innerHTML=art(p);const copy=document.createElement("div");const title=document.createElement("h3");title.textContent=p.name;const specs=document.createElement("p");specs.textContent=p.specs||"";const price=document.createElement("strong");price.textContent=Number.isFinite(p.price)&&p.price>0?fmt(p.price)+" DA":"Prix sur demande";const link=document.createElement("button");link.className="btn btn-primary";link.textContent="Voir le produit";link.addEventListener("click",()=>detail(p.id));copy.append(title,specs,price,document.createElement("br"),link);track.append(media,copy);prev.hidden=next.hidden=items.length<2;}
+ function move(d){if(items.length){pos=(pos+d+items.length)%items.length;show()}}
+ prev.addEventListener("click",()=>move(-1));next.addEventListener("click",()=>move(1));let x=0;root.addEventListener("touchstart",e=>{x=e.touches[0].clientX},{passive:true});root.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-x;if(Math.abs(dx)>45)move(dx<0?1:-1)},{passive:true});
+ document.addEventListener("monpanier:catalog-ready",()=>{items=state.custom.filter(p=>p.id&&p.name).slice(0,8);pos=0;show()});
 })();
 </script>
 <script>
