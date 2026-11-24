@@ -36,7 +36,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <div id="p-gallery-preview" class="flex" aria-label="Photos déjà liées au produit"></div>
 <p style="font-size:12px">Ajoutez uniquement des photos réelles du même produit. La première photo est l'image principale, les autres apparaissent en miniatures sous elle (maximum 12).</p>
 <div class="flex"><button class="primary" type="submit">Enregistrer</button><button id="cancel" type="button">Annuler</button></div></form></div></div>
-<div id="view-categories" class="hidden"><div class="panel"><h2>Gestion des catégories</h2><p>Ajoutez une catégorie : elle apparaît dans le formulaire produit et sur la boutique.</p><form id="category-form"><input type="hidden" id="category-id"><div class="fields"><label>Nom<input required id="category-name" maxlength="100"></label><label>Slug (optionnel)<input id="category-slug" placeholder="ex. imprimantes"></label><label>Description<input id="category-description"></label><label>Image HTTPS<input id="category-image" type="url"></label><label>Ordre<input id="category-order" type="number" value="0"></label><label>Visible<select id="category-active"><option value="true">Oui</option><option value="false">Non</option></select></label></div><div class="flex"><button class="primary" type="submit">Enregistrer la catégorie</button><button type="button" id="category-new">Nouveau</button></div></form></div><div class="panel"><h2>Catégories</h2><div class="scroll"><table><thead><tr><th>Nom</th><th>Slug</th><th>Visible</th><th>Actions</th></tr></thead><tbody id="category-list"></tbody></table></div></div></div><div id="view-stock" class="hidden"><div class="panel"><div class="flex between"><h2>Gestion du stock</h2><button id="stock-refresh">Actualiser</button></div><p>Modifiez les quantités et enregistrez le stock réel disponible.</p><div class="scroll"><table><thead><tr><th>Produit</th><th>Stock actuel</th><th>Nouvelle quantité</th><th>Action</th></tr></thead><tbody id="stock-list"></tbody></table></div></div></div>
+<div id="view-categories" class="hidden"><div class="panel"><h2>Gestion des catégories</h2><p>Ajoutez une catégorie : elle apparaît dans le formulaire produit et sur la boutique.</p><form id="category-form"><input type="hidden" id="category-id"><div class="fields"><label>Nom<input required id="category-name" maxlength="100"></label><label>Slug (optionnel)<input id="category-slug" placeholder="ex. imprimantes"></label><label>Description<input id="category-description"></label><label>Image HTTPS<input id="category-image" type="url"></label><label>Ordre<input id="category-order" type="number" value="0"></label><label>Visible<select id="category-active"><option value="true">Oui</option><option value="false">Non</option></select></label></div><div class="flex"><button class="primary" type="submit">Enregistrer la catégorie</button><button type="button" id="category-new">Nouveau</button></div></form></div><div class="panel"><div class="flex between"><h2>Catégories</h2><button type="button" id="category-refresh">Actualiser</button></div><p id="category-status" role="status" aria-live="polite"></p><div class="scroll"><table><thead><tr><th>Nom</th><th>Slug</th><th>Visible</th><th>Actions</th></tr></thead><tbody id="category-list"></tbody></table></div></div></div><div id="view-stock" class="hidden"><div class="panel"><div class="flex between"><h2>Gestion du stock</h2><button id="stock-refresh">Actualiser</button></div><p>Modifiez les quantités et enregistrez le stock réel disponible.</p><div class="scroll"><table><thead><tr><th>Produit</th><th>Stock actuel</th><th>Nouvelle quantité</th><th>Action</th></tr></thead><tbody id="stock-list"></tbody></table></div></div></div>
 <div id="view-orders" class="hidden"><div class="panel"><div class="flex between"><h2>Commandes</h2><button id="csv">Exporter CSV</button></div><p class="warning">Commandes non payées automatiquement. Vérifiez chaque client et confirmez la disponibilité avant expédition. Les conversations WhatsApp seules ne sont pas importées.</p><div class="scroll"><table><thead><tr><th>Date</th><th>Client</th><th>Articles</th><th>Total</th><th>Statut</th></tr></thead><tbody id="order-list"></tbody></table></div></div></div>
 <div id="view-settings" class="hidden"><div class="panel"><h2>Coordonnées du magasin</h2><form id="settings-form"><div class="fields"><label>Nom du magasin<input id="shop-name" required></label><label>WhatsApp<input id="shop-phone" required pattern="[0-9]{9,15}"></label></div><div><button class="primary">Enregistrer</button></div></form></div></div>
 </section></main>
@@ -48,7 +48,7 @@ const $$=s=>[...document.querySelectorAll(s)];
 const cfg=window.MONPANIER_SUPABASE||{}, valid=!!(cfg.url&&cfg.anonKey&&window.supabase);
 const db=valid?window.supabase.createClient(cfg.url,cfg.anonKey):null;
 const store={products:[],orders:[],items:[],settings:{},categories:[]};
-let gallerySupported=false;
+let gallerySupported=false, categoryReady=false;
 const fmt=n=>new Intl.NumberFormat("fr-DZ").format(Number(n)||0)+" DA";
 const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function notify(m,error=false){$("#notice").textContent=m;$("#notice").className=error?"error":"success"}
@@ -59,15 +59,17 @@ $("#forgot-password").onclick=async()=>{if(!valid){notify("Configuration Supabas
 $("#signout").onclick=async()=>{await db.auth.signOut();show("login");notify("Déconnecté.")};
 $$("[data-tab]").forEach(b=>b.onclick=()=>{$$("[data-tab]").forEach(x=>x.classList.toggle("on",x===b));for(const id of ["products","categories","stock","orders","settings"])$("#view-"+id).classList.toggle("hidden",id!==b.dataset.tab)});
 async function load(){
+const categoriesTask=loadCategories();
 const [p,o,i,s]=await Promise.all([db.from("products").select("*").limit(1000),db.from("orders").select("*").order("created_at",{ascending:false}).limit(500),db.from("order_items").select("*").limit(5000),db.from("shop_settings").select("*").eq("id",1).maybeSingle()]);
-const e=p.error||o.error||i.error||s.error;if(e){notify(e.message,true);return}
+const e=p.error||o.error||i.error||s.error;if(e){await categoriesTask;notify(e.message,true);return}
 store.products=p.data||[];store.orders=o.data||[];store.items=i.data||[];store.settings=s.data||{};
 const probe=await db.from("products").select("image_urls").limit(1);
 gallerySupported=!probe.error;
 $("#gallery-notice").classList.toggle("hidden",gallerySupported);
 $("#p-gallery-upload").disabled=!gallerySupported;
 $("#p-gallery-links").disabled=!gallerySupported;
-await loadCategories();
+await categoriesTask;
+renderCategoryManagement();
 render();
 }
 function render(){
@@ -186,7 +188,7 @@ try{
  old_price:$("#p-old").value===""?null:Number($("#p-old").value),
  stock,badge:$("#p-badge").value.trim(),specs:$("#p-specs").value.trim(),
  image_url:url,is_active:$("#p-active").value==="true",
- art:cat==="laptops"?"laptop":cat==="desktops"?"desktop":cat==="screens"?"aio":"keyboard",
+ art:cat==="laptops"?"laptop":cat==="desktops"?"desktop":cat==="screens"?"aio":cat==="printers"?"printer":"keyboard",
  color:"#f58227",glow:"#ffe0b9",updated_at:new Date().toISOString()};
  if(gallerySupported)obj.image_urls=album;
  const {error}=id?await db.from("products").update(obj).eq("id",id):await db.from("products").insert(obj);
@@ -200,22 +202,46 @@ $("#order-list").onchange=async e=>{const el=e.target.closest("[data-status]");i
 $("#settings-form").onsubmit=async e=>{e.preventDefault();const {error}=await db.from("shop_settings").update({shop_name:$("#shop-name").value.trim(),whatsapp:$("#shop-phone").value.trim()}).eq("id",1);if(error)notify(error.message,true);else{notify("Paramètres enregistrés.");await load()}};
 $("#csv").onclick=()=>{const rows=[["Identifiant","Date","Client","Téléphone","Ville","Total DZD","Statut"],...store.orders.map(o=>[o.id,o.created_at,o.customer_name,o.customer_phone,o.customer_city,o.total,o.status])];const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replaceAll('"','""')+'"').join(";")).join("\r\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="commandes-mon-panier.csv";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 
-const initialCategories=[{slug:"laptops",name:"PC portables"},{slug:"desktops",name:"PC de bureau"},{slug:"accessories",name:"Accessoires"}];
+const initialCategories=[{slug:"laptops",name:"PC portables",sort_order:10},{slug:"desktops",name:"PC de bureau",sort_order:20},{slug:"screens",name:"Écrans",sort_order:30},{slug:"printers",name:"Imprimantes",sort_order:40},{slug:"accessories",name:"Accessoires",sort_order:50}];
 function resetCategory(){ $("#category-form").reset();$("#category-id").value="";$("#category-slug").readOnly=false; }
 function renderCategoryManagement(){
- const cats=store.categories.length?store.categories:initialCategories;
+ const cats=categoryReady?store.categories:[...initialCategories,...store.categories.filter(c=>!initialCategories.some(d=>d.slug===c.slug))];
+ const options=[...cats,...[...new Set(store.products.map(p=>p.category).filter(Boolean))].filter(slug=>!cats.some(c=>c.slug===slug)).map(slug=>({slug,name:slug,is_active:false}))];
  const current=$("#p-category").value,filter=$("#product-filter").value;
- $("#p-category").innerHTML=cats.filter(c=>c.is_active!==false||store.products.some(p=>p.category===c.slug)).map(c=>'<option value="'+safe(c.slug)+'">'+safe(c.name)+'</option>').join("");
- $("#product-filter").innerHTML='<option value="all">Toutes</option>'+cats.map(c=>'<option value="'+safe(c.slug)+'">'+safe(c.name)+'</option>').join("");
+ $("#p-category").innerHTML=options.filter(c=>c.is_active!==false||store.products.some(p=>p.category===c.slug)).map(c=>'<option value="'+safe(c.slug)+'">'+safe(c.name)+'</option>').join("");
+ $("#product-filter").innerHTML='<option value="all">Toutes</option>'+options.map(c=>'<option value="'+safe(c.slug)+'">'+safe(c.name)+'</option>').join("");
  if([...$("#p-category").options].some(x=>x.value===current))$("#p-category").value=current;
  if([...$("#product-filter").options].some(x=>x.value===filter))$("#product-filter").value=filter;
- $("#category-list").innerHTML=store.categories.map(c=>'<tr><td>'+safe(c.name)+'</td><td>'+safe(c.slug)+'</td><td>'+(c.is_active?"Oui":"Non")+'</td><td><button data-category-edit="'+safe(c.id)+'">Modifier</button> <button data-category-toggle="'+safe(c.id)+'">'+(c.is_active?"Masquer":"Afficher")+'</button></td></tr>').join("")||'<tr><td colspan="4">Aucune catégorie</td></tr>';
+ $("#category-form").querySelectorAll("input,select,button").forEach(el=>el.disabled=!categoryReady);
+ $("#category-list").innerHTML=cats.map(c=>'<tr><td>'+safe(c.name)+'</td><td>'+safe(c.slug)+'</td><td>'+(categoryReady?(c.is_active?"Oui":"Non"):"Non vérifié")+'</td><td>'+(categoryReady&&c.id?'<button data-category-edit="'+safe(c.id)+'">Modifier</button> <button data-category-toggle="'+safe(c.id)+'">'+(c.is_active?"Masquer":"Afficher")+'</button>':'Lecture seule')+'</td></tr>').join("")||'<tr><td colspan="4">Aucune catégorie</td></tr>';
 }
 async function loadCategories(){
- const {data,error}=await db.from("categories").select("*").order("sort_order").order("name");
- if(error){store.categories=[];notify("Exécutez supabase/cms-migration.sql dans Supabase pour activer les catégories.",true);return}
- store.categories=data||[];renderCategoryManagement();
+ const status=$("#category-status"),refresh=$("#category-refresh");
+ refresh.disabled=true;status.textContent="Chargement des catégories…";
+ categoryReady=false;
+ renderCategoryManagement();
+ try{
+  let {data,error}=await db.from("categories").select("*").order("sort_order").order("name");
+  if(error)throw error;
+  store.categories=data||[];
+  const missing=initialCategories.filter(c=>!store.categories.some(x=>x.slug===c.slug));
+  if(missing.length){
+   const saved=await db.from("categories").upsert(missing,{onConflict:"slug",ignoreDuplicates:true});
+   if(saved.error)throw saved.error;
+   const result=await db.from("categories").select("*").order("sort_order").order("name");
+   if(result.error)throw result.error;
+   store.categories=result.data||[];
+   if(initialCategories.some(c=>!store.categories.some(x=>x.slug===c.slug)))throw Error("Certaines catégories restent indisponibles.");
+  }
+  categoryReady=true;
+  status.textContent=store.categories.length+" catégorie(s) chargée(s).";
+ }catch(error){
+  status.textContent="Liste indicative en lecture seule. Synchronisation impossible : "+(error.message||"Erreur réseau")+". Vérifiez la migration supabase/cms-migration.sql et les droits administrateur.";
+ }finally{
+  renderCategoryManagement();refresh.disabled=false;
+ }
 }
+$("#category-refresh").onclick=async()=>{await loadCategories();render()};
 $("#category-new").onclick=resetCategory;
 $("#category-list").onclick=async e=>{
  const ed=e.target.closest("[data-category-edit]"),tg=e.target.closest("[data-category-toggle]");
@@ -227,7 +253,7 @@ $("#category-list").onclick=async e=>{
  if(error)notify(error.message,true);else{notify("Catégorie mise à jour.");await loadCategories();render()}}
 };
 $("#category-form").onsubmit=async e=>{
- e.preventDefault();const id=$("#category-id").value,name=$("#category-name").value.trim();
+ e.preventDefault();if(!categoryReady){notify("Synchronisez les catégories avant de modifier.",true);return}const id=$("#category-id").value,name=$("#category-name").value.trim();
  const slug=($("#category-slug").value.trim()||name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""));
  if(!name||!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)){notify("Nom ou slug invalide.",true);return}
  const image=$("#category-image").value.trim();if(image&&!image.startsWith("https://")){notify("Utilisez une image HTTPS.",true);return}
