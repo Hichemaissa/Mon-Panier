@@ -563,13 +563,7 @@ const SHOP_LAPTOPS=[
  {id:"thinkpad-i5-5",category:"laptops",name:"Lenovo ThinkPad – Intel Core i5 (5ᵉ génération)",specs:"Intel Core i5 (5ᵉ génération) • 8 Go RAM • SSD 120 Go • Occasion",price:32000,badge:"Occasion",art:"laptop",color:"#f58227",glow:"#ffe0b9",image_url:"./images/lenovo-thinkpad-i5-5e.svg"},
  {id:"celeron-n2840",category:"laptops",name:"PC portable 14 pouces – Intel Celeron N2840",specs:"14 pouces • 2,16 GHz • 4 Go RAM • SSD 120 Go • Intel HD Graphics • Windows 10 64 bits • Batterie faible, chargeur d’origine inclus",price:null,badge:"Prix sur demande",art:"laptop",color:"#f58227",glow:"#ffe0b9",image_url:"./images/pc-portable-celeron-n2840.webp"}
 ];
-const allProducts=()=>{
- const live=[...STARTER_PRODUCTS,...state.custom];
- const ids=new Set(live.map(p=>String(p.id)));
- const fixed=SHOP_LAPTOPS.map(p=>({...p,...(live.find(x=>String(x.id)===p.id)||{})}));
- const fixedIds=new Set(fixed.map(p=>p.id));
- return [...fixed,...live.filter(p=>!fixedIds.has(String(p.id))),...CATEGORY_SAMPLES.filter(p=>!ids.has(String(p.id))&&!fixedIds.has(String(p.id)))];
-};
+const allProducts=()=>state.custom;
 const getProduct=id=>allProducts().find(x=>x.id===id);
 const fmt=n=>new Intl.NumberFormat("fr-DZ").format(n);
 const priceHTML=p=>p.price==null?"Prix sur demande":`${fmt(p.price)} <span class="currency">DA</span>`;
@@ -605,8 +599,7 @@ function renderProducts(){
  const q=state.query.trim().toLowerCase();
  let arr=allProducts().filter(p=>(state.cat==="all"||p.category===state.cat)&&(!state.favoritesOnly||state.favorites.has(p.id))&&(p.name+" "+p.specs+" "+(categoryNames[p.category]||p.category)).toLowerCase().includes(q));
  // A category is never empty merely because its remote records are not yet available.
- if(!arr.length && state.cat!=="all" && !q && !state.favoritesOnly)
-   arr=CATEGORY_SAMPLES.filter(p=>p.category===state.cat);
+
  if(state.sort==="low")arr.sort((a,b)=>(a.price??Infinity)-(b.price??Infinity));
  if(state.sort==="high")arr.sort((a,b)=>(b.price??-Infinity)-(a.price??-Infinity));
  if(state.sort==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
@@ -701,7 +694,7 @@ $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
-<script src="./supabase/storefront.js?v=20261121-2"></script>
+<script src="./supabase/storefront.js?v=20261124-live-only"></script>
 <script src="./branding.js"></script>
 <script src="./product-pages.js"></script>
 <script>
