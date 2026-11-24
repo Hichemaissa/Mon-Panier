@@ -638,12 +638,12 @@ function orderText(){
    `${i+1}. ${x.p.name}`,
    `   Quantité : ${x.qty}`,
    `   Sous-total : ${fmt(x.p.price*x.qty)} DA (prix indicatif)`
-  ].join("\\n")),
+  ].join("\n")),
   "━━━━━━━━━━━━━━━━━━━━",
   `TOTAL AFFICHÉ : ${fmt(total)} DA (non définitif)`,
   "",
   "Merci de confirmer les prix, les stocks et la livraison."
- ].join("\\n");
+ ].join("\n");
 }
 function copyOrder(){const text=orderText();if(!text){toast("Ajoutez d’abord un produit au panier.");return}if(navigator.clipboard?.writeText){navigator.clipboard.writeText(text).then(()=>toast("Commande copiée ✓")).catch(()=>fallbackCopy(text))}else fallbackCopy(text)}
 function fallbackCopy(text){const el=document.createElement("textarea");el.value=text;document.body.appendChild(el);el.select();try{document.execCommand("copy");toast("Commande copiée ✓")}catch{toast("Copie impossible")}el.remove()}
