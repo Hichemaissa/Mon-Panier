@@ -622,7 +622,7 @@ function renderProducts(){
 function updateBadges(){$("#cartCount").textContent=Object.values(state.cart).reduce((a,n)=>a+n,0);$("#favCount").textContent=state.favorites.size}
 function toast(message){const t=$("#toast");t.textContent=message;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2900)}
 function setCategory(cat){
- if(!["all","laptops","desktops","screens","accessories"].includes(cat))return;
+ if(cat!=="all"&&!Object.prototype.hasOwnProperty.call(categoryNames,cat))return;
  state.cat=cat;state.favoritesOnly=false;
  // Switching sections must not inherit a search that silently hides all products.
  state.query="";
