@@ -72,7 +72,7 @@ async function refreshCatalog(){
    id:p.id,category:normalizeCategory(p.category),name:p.name,specs:p.specs||"",price:Number(p.price),
    oldPrice:p.old_price===null?null:Number(p.old_price),
    badge:p.badge||"",art:p.art||"laptop",color:p.color||"#f58227",
-   glow:p.glow||"#ffe0b9",image_url:({printers:"./images/generic-printer.svg",laptops:"./images/generic-laptop.svg"})[p.category]||p.image_url||(p.image_urls||[])[0]||"",image_urls:p.image_urls||[],stock:p.stock
+   glow:p.glow||"#ffe0b9",image_url:p.image_url||(p.image_urls||[])[0]||({printers:"./images/generic-printer.svg",laptops:"./images/generic-laptop.svg"})[p.category]||"",image_urls:p.image_urls||[],stock:p.stock
   }));
   // Keep all eight illustrated showcase products visible alongside genuine published items.
   // Existing database products take priority when identifiers match.
