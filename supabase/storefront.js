@@ -12,6 +12,7 @@ if(!cfg.url||!cfg.anonKey||!window.supabase){
 }
 const db=window.supabase.createClient(cfg.url,cfg.anonKey);
 const shopOriginalPhone=state.phone;
+const printerFallback=STARTER_PRODUCTS.filter(p=>p.category==="printers").map(p=>({...p,image_url:"",gallery:[],badge:"Prix indicatif · disponibilité à confirmer"}));
 // Catalogue de présentation : utilisé seulement si Supabase ne renvoie aucun
 // produit publié ou si la connexion échoue. Prix indicatifs, stock nul.
 const DISPLAY_FALLBACK=[
@@ -26,7 +27,7 @@ const DISPLAY_FALLBACK=[
 ];
 function showDisplayFallback(){
  STARTER_PRODUCTS.splice(0,STARTER_PRODUCTS.length);
- state.custom=DISPLAY_FALLBACK.map(p=>({...p,badge:"Démonstration · prix indicatif",oldPrice:null,color:"#f58227",glow:"#ffe0b9"}));
+ state.custom=[...DISPLAY_FALLBACK,...printerFallback].map(p=>({...p,badge:"Démonstration · prix indicatif",oldPrice:null,color:"#f58227",glow:"#ffe0b9"}));
  categoryNames.screens=categoryNames.screens||"Écrans";
  renderProducts();renderCart();
 }
@@ -76,7 +77,7 @@ async function refreshCatalog(){
   // Keep all eight illustrated showcase products visible alongside genuine published items.
   // Existing database products take priority when identifiers match.
   const liveIds=new Set(state.custom.map(p=>p.id));
-  state.custom.push(...DISPLAY_FALLBACK.filter(p=>!liveIds.has(p.id)).map(p=>({...p,badge:"Démonstration · prix indicatif",oldPrice:null,color:"#f58227",glow:"#ffe0b9"})));
+  state.custom.push(...[...DISPLAY_FALLBACK,...printerFallback].filter(p=>!liveIds.has(p.id)).map(p=>({...p,badge:"Démonstration · prix indicatif",oldPrice:null,color:"#f58227",glow:"#ffe0b9"})));
   categoryNames.screens=categoryNames.screens||"Écrans";
   // Optional migration: additional photo URLs for the product detail gallery.
   // Keep the live catalogue usable if the owner has not applied the migration yet.
