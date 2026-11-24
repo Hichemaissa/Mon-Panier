@@ -384,14 +384,14 @@ body.category-drawer-open{overflow:hidden}
   </div>
 <style>
 #promoSlider{position:relative;overflow:hidden;border-radius:23px;border:1px solid #ffdec1;background:linear-gradient(115deg,#fff4e8,#fffaf6);box-shadow:0 12px 34px #d2702020}
-#promoSlider .promo-slide{display:none;grid-template-columns:1fr 1fr;align-items:center;min-height:295px}
-#promoSlider .promo-slide.active{display:grid;animation:promo-enter .52s cubic-bezier(.2,.78,.2,1) both}
+#promoSlider .promo-slide{display:none;grid-template-columns:1.45fr 1fr;align-items:center;min-height:380px}
+#promoSlider .promo-slide.active{display:grid;animation:promo-enter .18s cubic-bezier(.2,.78,.2,1) both}
 #promoSlider[data-direction="prev"] .promo-slide.active{animation-name:promo-enter-prev}
 @keyframes promo-enter{from{opacity:.3;transform:translateX(38px) scale(.985)}to{opacity:1;transform:translateX(0) scale(1)}}
 @keyframes promo-enter-prev{from{opacity:.3;transform:translateX(-38px) scale(.985)}to{opacity:1;transform:translateX(0) scale(1)}}
-#promoSlider .promo-slide.active img{animation:promo-image-in .65s cubic-bezier(.2,.75,.2,1) both}
+#promoSlider .promo-slide.active img{animation:promo-image-in .18s cubic-bezier(.2,.75,.2,1) both}
 @keyframes promo-image-in{from{opacity:.65;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-#promoSlider .promo-slide.active .promo-offer{animation:promo-copy-in .55s .08s ease-out both}
+#promoSlider .promo-slide.active .promo-offer{animation:promo-copy-in .16s 0s ease-out both}
 @keyframes promo-copy-in{from{opacity:.25;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 #promoSlider .promo-progress{height:4px;background:#f4dbc5;overflow:hidden}
 #promoSlider .promo-progress::before{content:"";display:block;width:100%;height:100%;background:linear-gradient(90deg,#f16b13,#ffc06d);transform:scaleX(0);transform-origin:left;animation:promo-progress 4.5s linear infinite;animation-play-state:paused}
@@ -404,7 +404,7 @@ body.category-drawer-open{overflow:hidden}
 #promoSlider .promo-slide{touch-action:pan-y;user-select:none;-webkit-user-select:none}
 #promoSlider .promo-slide a{user-select:auto;-webkit-user-select:auto}
 @media(prefers-reduced-motion:reduce){#promoSlider .promo-slide.active,#promoSlider .promo-slide.active img,#promoSlider .promo-slide.active .promo-offer{animation:none!important}#promoSlider .promo-progress{display:none}#promoSlider .promo-nav button{transition:none}}
-#promoSlider .promo-slide img{width:100%;height:295px;object-fit:contain;padding:18px;background:#fff}
+#promoSlider .promo-slide img{width:100%;height:380px;object-fit:contain;padding:6px;background:#fff}
 #promoSlider .promo-offer{padding:27px 38px}
 #promoSlider .promo-offer small{color:#ad5619;font-weight:800;letter-spacing:.06em}
 #promoSlider .promo-offer h3{font-size:clamp(23px,3vw,34px);margin:10px 0 12px}
@@ -418,7 +418,7 @@ body.category-drawer-open{overflow:hidden}
 #promoSlider .promo-dots button{min-width:10px;width:10px;height:10px;border-radius:50%;border:0;background:#e9c3a5;padding:0}
 #promoSlider .promo-dots button.active{background:#e65d15;transform:scale(1.2)}
 #promoSlider .promo-disclaimer{font-size:11px;color:#856c56;margin:10px 0 0}
-@media(max-width:680px){#promoSlider .promo-slide{grid-template-columns:1fr}#promoSlider .promo-slide img{height:180px}#promoSlider .promo-offer{padding:18px}#promoSlider .promo-offer .promo-final{font-size:23px}}
+@media(max-width:680px){#promoSlider .promo-slide{grid-template-columns:1fr}#promoSlider .promo-slide img{height:clamp(245px,76vw,340px);padding:4px}#promoSlider .promo-offer{padding:18px}#promoSlider .promo-offer .promo-final{font-size:23px}}
 </style><div id="promoSlider" aria-roledescription="carousel" aria-label="Produits en promotion — démonstration">
 <article class="promo-slide active" aria-hidden="false" data-slide="0">
 <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&amp;fit=crop&amp;w=1050&amp;q=85" alt="Photo illustrative : PC Portable 14 pouces" fetchpriority="high">
