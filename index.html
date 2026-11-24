@@ -466,53 +466,6 @@ body.category-drawer-open{overflow:hidden}
     </select>
   </div>
   
-  <article class="featured-laptop" id="featured-thinkpad-i5" data-mp-product="thinkpad-i5-5" tabindex="0" role="link" title="Voir la fiche de ce produit" aria-label="PC portable Lenovo ThinkPad Core i5 5e génération">
-    <div class="featured-media" style="background:#fff4e8">
-      <img src="./images/lenovo-thinkpad-i5-5e.svg" alt="Photo du Lenovo ThinkPad noir présenté chez Mon Panier Informatique" loading="lazy" decoding="async" width="156" height="208" style="display:block;width:100%;max-height:340px;object-fit:contain;border-radius:14px">
-    </div>
-    <div class="featured-copy">
-      <div class="eyebrow">PC PORTABLE · LENOVO THINKPAD</div>
-      <h3>Lenovo ThinkPad – Intel Core i5 (5ᵉ génération)</h3>
-      <p class="summary">PC portable d'occasion photographié en boutique. Contactez-nous pour vérifier son état, sa disponibilité et les modalités d'achat.</p>
-      <ul class="featured-specs">
-        <li><b>Processeur :</b> Intel Core i5 (5ᵉ génération)</li>
-        <li><b>Mémoire :</b> 8 Go RAM</li>
-        <li><b>Stockage :</b> SSD 120 Go</li>
-        <li><b>Marque :</b> Lenovo ThinkPad</li>
-      </ul>
-      <div class="featured-purchase">
-        <strong>32 000 DA</strong>
-        <a class="btn btn-primary" href="https://wa.me/213560283892?text=Bonjour%2C%20je%20souhaite%20commander%20le%20Lenovo%20ThinkPad%20Core%20i5%205e%20g%C3%A9n%C3%A9ration%2C%208%20Go%20RAM%2C%20SSD%20120%20Go%2C%20affich%C3%A9%20%C3%A0%2032%20000%20DA.%20Est-il%20disponible%20%3F" target="_blank" rel="noopener noreferrer">Commander sur WhatsApp</a>
-      </div>
-      <p class="summary" style="margin-top:10px">Prix annoncé sur la photo fournie. À confirmer auprès du vendeur.</p>
-    </div>
-  </article>
-
-  <article class="featured-laptop" id="featured-laptop-n2840" data-mp-product="celeron-n2840" tabindex="0" role="link" title="Voir la fiche de ce produit" aria-label="PC portable Intel Celeron N2840">
-    <div class="featured-media">
-      <img src="./images/pc-portable-celeron-n2840.webp" alt="Photo réelle du PC portable 14 pouces Intel Celeron N2840 dans la boutique Mon Panier Informatique" loading="eager" decoding="async" width="320" height="317" style="display:block;width:100%;height:100%;min-height:275px;object-fit:cover;border-radius:14px">
-    </div>
-    <div class="featured-copy">
-      <div class="eyebrow">PC PORTABLE · MON PANIER INFORMATIQUE</div>
-      <h3>PC portable 14 pouces – Intel Celeron N2840</h3>
-      <p class="summary">Ordinateur avec chargeur d’origine, Windows 10 64 bits et logiciels et pilotes installés.</p>
-      <ul class="featured-specs">
-        <li><b>Écran :</b> 14 pouces</li>
-        <li><b>Processeur :</b> Intel Celeron N2840, 2,16 GHz</li>
-        <li><b>Mémoire :</b> 4 Go RAM</li>
-        <li><b>Stockage :</b> SSD 120 Go</li>
-        <li><b>Graphique :</b> Intel HD Graphics</li>
-        <li><b>Système :</b> Windows 10, 64 bits</li>
-      </ul>
-      <div class="featured-warning"><b>À noter :</b> batterie faible. Chargeur d’origine inclus.</div>
-      <div class="featured-purchase">
-        <strong>Prix sur demande</strong>
-        <a class="btn btn-primary" href="https://wa.me/213560283892?text=Bonjour%2C%20je%20souhaite%20conna%C3%AEtre%20le%20prix%20du%20PC%20portable%2014%20pouces%20Intel%20Celeron%20N2840%2C%204%20Go%20RAM%2C%20SSD%20120%20Go." target="_blank" rel="noopener noreferrer">Demander sur WhatsApp</a>
-      </div>
-    </div>
-  </article>
-
-
   <div class="products-grid" id="productsGrid"></div>
   </div>
   </div>
@@ -605,17 +558,23 @@ const state={cat:initialCategory,sort:"default",query:"",favoritesOnly:false,car
 const categoryNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires",printers:"Imprimantes"};
 // Fixed sample catalog remains available if the live API returns partial results.
 const CATEGORY_SAMPLES=STARTER_PRODUCTS.map(p=>({...p}));
+const SHOP_LAPTOPS=[
+ {id:"thinkpad-i5-5",category:"laptops",name:"Lenovo ThinkPad – Intel Core i5 (5ᵉ génération)",specs:"Intel Core i5 (5ᵉ génération) • 8 Go RAM • SSD 120 Go • Occasion",price:32000,badge:"Occasion",art:"laptop",color:"#f58227",glow:"#ffe0b9",image_url:"./images/lenovo-thinkpad-i5-5e.svg"},
+ {id:"celeron-n2840",category:"laptops",name:"PC portable 14 pouces – Intel Celeron N2840",specs:"14 pouces • 2,16 GHz • 4 Go RAM • SSD 120 Go • Intel HD Graphics • Windows 10 64 bits • Batterie faible, chargeur d’origine inclus",price:null,badge:"Prix sur demande",art:"laptop",color:"#f58227",glow:"#ffe0b9",image_url:"./images/pc-portable-celeron-n2840.webp"}
+];
 const allProducts=()=>{
  const live=[...STARTER_PRODUCTS,...state.custom];
  const ids=new Set(live.map(p=>String(p.id)));
- return [...live,...CATEGORY_SAMPLES.filter(p=>!ids.has(String(p.id)))];
+ const fixed=SHOP_LAPTOPS.map(p=>({...p,...(live.find(x=>String(x.id)===p.id)||{})}));
+ const fixedIds=new Set(fixed.map(p=>p.id));
+ return [...fixed,...live.filter(p=>!fixedIds.has(String(p.id))),...CATEGORY_SAMPLES.filter(p=>!ids.has(String(p.id))&&!fixedIds.has(String(p.id)))];
 };
 const getProduct=id=>allProducts().find(x=>x.id===id);
 const fmt=n=>new Intl.NumberFormat("fr-DZ").format(n);
-const priceHTML=p=>`${fmt(p.price)} <span class="currency">DA</span>`;
+const priceHTML=p=>p.price==null?"Prix sur demande":`${fmt(p.price)} <span class="currency">DA</span>`;
 const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function art(p){
- if(p.image_url&&/^https:\/\//i.test(p.image_url))return '<img loading="lazy" alt="'+safe(p.name)+'" src="'+safe(p.image_url)+'" style="width:100%;height:100%;max-height:240px;object-fit:contain;padding:12px">';
+ if(p.image_url&&(/^https:\/\//i.test(p.image_url)||/^\.\/images\/[\w.-]+$/i.test(p.image_url)))return '<img loading="lazy" alt="'+safe(p.name)+'" src="'+safe(p.image_url)+'" style="width:100%;height:100%;max-height:240px;object-fit:contain;padding:12px">';
  const id=p.id.replace(/[^a-z0-9]/gi,""),c=p.color;
  const prefix=`<svg class="art-svg" viewBox="0 0 300 230" aria-hidden="true"><defs>
  <linearGradient id="met${id}" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#b6c7d6"/><stop offset=".52" stop-color="#ecf4f9"/><stop offset="1" stop-color="#66798e"/></linearGradient>
@@ -643,19 +602,12 @@ function art(p){
 }
 function renderProducts(){
  const q=state.query.trim().toLowerCase();
-  const thinkpad=$("#featured-thinkpad-i5");
-  if(thinkpad){const m="lenovo thinkpad intel core i5 5e génération 8 go ram ssd 120 go 32000";thinkpad.hidden=!((state.cat==="all"||state.cat==="laptops")&&!state.favoritesOnly&&(!q||m.includes(q)));}
-  const featured=$("#featured-laptop-n2840");
-  if(featured){
-    const matches="pc portable 14 pouces intel celeron n2840 2.16 ghz 4 go ram ssd 120 go hd graphics windows 10 batterie faible";
-    featured.hidden=!(["all","laptops"].includes(state.cat)&&!state.favoritesOnly&&(!q||matches.includes(q)));
-  }
  let arr=allProducts().filter(p=>(state.cat==="all"||p.category===state.cat)&&(!state.favoritesOnly||state.favorites.has(p.id))&&(p.name+" "+p.specs+" "+(categoryNames[p.category]||p.category)).toLowerCase().includes(q));
  // A category is never empty merely because its remote records are not yet available.
  if(!arr.length && state.cat!=="all" && !q && !state.favoritesOnly)
    arr=CATEGORY_SAMPLES.filter(p=>p.category===state.cat);
- if(state.sort==="low")arr.sort((a,b)=>a.price-b.price);
- if(state.sort==="high")arr.sort((a,b)=>b.price-a.price);
+ if(state.sort==="low")arr.sort((a,b)=>(a.price??Infinity)-(b.price??Infinity));
+ if(state.sort==="high")arr.sort((a,b)=>(b.price??-Infinity)-(a.price??-Infinity));
  if(state.sort==="name")arr.sort((a,b)=>a.name.localeCompare(b.name));
  $("#resultsHint").textContent=`${categoryNames[state.cat]||"Tous les produits"} · ${arr.length} produits — ${state.favoritesOnly?"Favoris uniquement":"Prix indicatifs"}`;
  $$(".filter,.side-filter").forEach(b=>b.classList.toggle("active",b.dataset.category===state.cat));
