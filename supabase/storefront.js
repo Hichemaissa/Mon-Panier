@@ -44,8 +44,8 @@ async function loadDynamicCategories(){
  const {data,error}=await db.from("categories").select("name,slug").eq("is_active",true).order("sort_order").order("name");
  if(error){console.warn("Catégories non activées",error.message);return}
  if(!data?.length)return;
- const allowed=["laptops","desktops","screens","accessories"];
- const fixedNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",accessories:"Accessoires"};
+ const allowed=["laptops","desktops","screens","printers","accessories"];
+ const fixedNames={laptops:"PC portables",desktops:"PC de bureau",screens:"Écrans",printers:"Imprimantes",accessories:"Accessoires"};
  data.splice(0,data.length,...allowed.map(slug=>({slug,name:fixedNames[slug]})));
  data.forEach(c=>categoryNames[c.slug]=c.name);
  const filters=document.querySelector(".filters");
@@ -60,7 +60,7 @@ function alertError(message){toast(message||"Une erreur est survenue.")}
 async function refreshCatalog(){
  try{
   const [prod,settings]=await Promise.all([
-   db.from("products").select("id,category,name,specs,price,old_price,badge,art,color,glow,image_url,stock,is_active").eq("is_active",true).order("created_at",{ascending:false}),
+   db.from("products").select("id,category,name,specs,price,old_price,badge,art,color,glow,image_url,image_urls,stock,is_active").eq("is_active",true).order("created_at",{ascending:false}),
    db.from("shop_settings").select("whatsapp").eq("id",1).maybeSingle()
   ]);
   if(prod.error)throw prod.error;
@@ -71,7 +71,7 @@ async function refreshCatalog(){
    id:p.id,category:normalizeCategory(p.category),name:p.name,specs:p.specs||"",price:Number(p.price),
    oldPrice:p.old_price===null?null:Number(p.old_price),
    badge:p.badge||"",art:p.art||"laptop",color:p.color||"#f58227",
-   glow:p.glow||"#ffe0b9",image_url:p.image_url||"",stock:p.stock
+   glow:p.glow||"#ffe0b9",image_url:p.image_url||(p.image_urls||[])[0]||"",image_urls:p.image_urls||[],stock:p.stock
   }));
   // Keep all eight illustrated showcase products visible alongside genuine published items.
   // Existing database products take priority when identifiers match.
