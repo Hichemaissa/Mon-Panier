@@ -266,7 +266,7 @@ function read(key,fallback){try{const v=JSON.parse(localStorage.getItem(key));re
 function write(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
 const state={cat:"all",sort:"default",query:"",favoritesOnly:false,cart:read("monpanier-cart",{}),favorites:new Set(read("monpanier-likes",[])),phone:read("monpanier-phone","213560283892"),custom:read("monpanier-custom",[])};
 const categoryNames={laptops:"PC portables",desktops:"PC de bureau",accessories:"Accessoires"};
-const allProducts=()=>[...STARTER_PRODUCTS,...state.custom];
+const allProducts=()=>state.custom;
 const getProduct=id=>allProducts().find(x=>x.id===id);
 const fmt=n=>new Intl.NumberFormat("fr-DZ").format(n);
 const priceHTML=p=>`${fmt(p.price)} <span class="currency">DA</span>`;
@@ -303,7 +303,7 @@ function renderProducts(){
   const featured=$("#featured-laptop-n2840");
   if(featured){
     const matches="pc portable 14 pouces intel celeron n2840 2.16 ghz 4 go ram ssd 120 go hd graphics windows 10 batterie faible";
-    featured.hidden=!(["all","laptops"].includes(state.cat)&&!state.favoritesOnly&&(!q||matches.includes(q)));
+    featured.hidden=true;
   }
  let arr=allProducts().filter(p=>(state.cat==="all"||p.category===state.cat)&&(!state.favoritesOnly||state.favorites.has(p.id))&&(p.name+" "+p.specs+" "+categoryNames[p.category]).toLowerCase().includes(q));
  if(state.sort==="low")arr.sort((a,b)=>a.price-b.price);
@@ -365,7 +365,7 @@ $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
-<script src="./supabase/storefront.js"></script>
+<script src="./supabase/storefront.js?v=20261124-live-only"></script>
 <script src="./branding.js"></script>
 <script src="./hero-banner.js"></script>
 </body>
