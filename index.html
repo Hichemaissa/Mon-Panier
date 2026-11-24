@@ -330,7 +330,20 @@ body.category-drawer-open{overflow:hidden}
 @media(max-width:600px){.products-grid{gap:9px}.product{border-radius:11px}.product-content{padding:10px;gap:4px}.product-art>img{padding:9px!important}.product-name{font-size:13px}.product-specs{font-size:10px;min-height:30px}.product-category{font-size:9px}.price{font-size:17px}.product-actions{grid-template-columns:minmax(0,1fr);gap:5px}.add-btn{font-size:10px;min-height:38px;white-space:normal}.view-btn{min-height:30px;font-size:14px}}
 @media(max-width:390px){.products-grid{grid-template-columns:1fr}}
 </style>
-<style>#promoSlider{touch-action:pan-y;cursor:grab}#promoSlider:active{cursor:grabbing}#promoSlider .promo-progress{display:none}#promoSlider img{user-select:none;-webkit-user-drag:none}</style></head>
+<style>
+#promoSlider{position:relative;border-radius:26px;background:radial-gradient(ellipse at 20% 50%,#fff8ee 0%,#f5e6d8 40%,#2c2330 41%,#211b28 100%);border:1px solid #ead9ca;overflow:hidden;box-shadow:0 12px 32px #291b2114;color:#fff}
+#promoSlider .live-slide{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:clamp(24px,5vw,70px);padding:32px 64px;min-height:320px}
+#promoSlider .live-media{height:260px;display:grid;place-items:center;overflow:hidden;border-radius:20px;background:#fffaf5;box-shadow:0 8px 28px #201a201c}
+#promoSlider .live-media img,#promoSlider .live-media svg{width:100%;height:100%;object-fit:contain;padding:12px}
+#promoSlider h3{font-size:clamp(22px,3vw,38px);line-height:1.16;margin:0 0 12px;font-weight:900;overflow-wrap:anywhere}
+#promoSlider p{color:#e0cdd4;font-size:14px;line-height:1.6;max-width:420px;margin:0 0 15px}
+#promoSlider strong{display:inline-block;font-size:clamp(23px,3vw,32px);color:#ffb36b;margin-bottom:15px}
+#promoSlider .btn{background:#ff9a3d;color:#291b21;min-height:44px;padding:10px 22px}
+#promoSlider .live-prev,#promoSlider .live-next{position:absolute;top:50%;transform:translateY(-50%);border:1px solid #ffffff80;border-radius:50%;width:38px;height:38px;background:#fff;color:#302331;font-size:25px;line-height:1;box-shadow:0 4px 14px #0002}
+#promoSlider .live-prev{left:12px}#promoSlider .live-next{right:12px}
+#promoSlider .live-count{position:absolute;bottom:12px;right:18px;font-size:11px;color:#e9d6cf;letter-spacing:.1em}
+@media(max-width:600px){#promoSlider{background:linear-gradient(180deg,#fff4e7 0%,#fff4e7 43%,#2c2330 43%,#211b28 100%);border-radius:20px}#promoSlider .live-slide{grid-template-columns:1fr;padding:16px 42px 35px;gap:22px;min-height:0}#promoSlider .live-media{height:190px}#promoSlider h3{font-size:23px}#promoSlider .live-prev,#promoSlider .live-next{width:30px;height:30px;top:115px}#promoSlider .live-prev{left:6px}#promoSlider .live-next{right:6px}}
+</style></head>
 <body>
 <div class="announcement">CATALOGUE DÉMONSTRATION · PRODUITS ET PRIX INDICATIFS</div>
 <a class="promo-topbar" href="#promotions" aria-label="Découvrir la rubrique Promotions">
@@ -380,7 +393,7 @@ body.category-drawer-open{overflow:hidden}
 
 <section class="container" id="promotions" hidden style="padding-top:24px">
 <style>#promoSlider{position:relative;border-radius:24px;background:#fff;border:1px solid var(--line);overflow:hidden}#promoSlider .live-slide{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px;padding:24px 50px;min-height:250px}#promoSlider .live-media{height:230px;display:grid;place-items:center;overflow:hidden}#promoSlider .live-media img,#promoSlider .live-media svg{width:100%;height:100%;object-fit:contain}#promoSlider h3{font-size:clamp(20px,3vw,32px);line-height:1.2;margin:0}#promoSlider strong{display:inline-block;font-size:23px;margin-bottom:12px}#promoSlider .live-prev,#promoSlider .live-next{position:absolute;top:50%;transform:translateY(-50%);border:0;border-radius:50%;width:34px;height:34px;background:#ff9a3d;font-size:23px}#promoSlider .live-prev{left:8px}#promoSlider .live-next{right:8px}@media(max-width:600px){#promoSlider .live-slide{grid-template-columns:1fr;padding:16px 42px;gap:12px}#promoSlider .live-media{height:160px}}</style>
-<div id="promoSlider" aria-roledescription="carousel" aria-label="Produits du catalogue"><div class="live-slide" aria-live="polite"></div><button class="live-prev" type="button" aria-label="Produit précédent">‹</button><button class="live-next" type="button" aria-label="Produit suivant">›</button></div></section>
+<div id="promoSlider" aria-roledescription="carousel" aria-label="Produits du catalogue"><div class="live-slide" aria-live="polite"></div><span class="live-count" aria-hidden="true"></span><button class="live-prev" type="button" aria-label="Produit précédent">‹</button><button class="live-next" type="button" aria-label="Produit suivant">›</button></div></section>
 <section class="container front-categories" aria-labelledby="frontCategoriesTitle">
   <div class="front-categories-head"><div><div class="eyebrow">DÉCOUVRIR</div><h2 id="frontCategoriesTitle">Nos catégories</h2></div><span>Choisissez votre univers informatique</span></div>
   <div class="front-category-grid">
@@ -656,7 +669,7 @@ $("#year").textContent=new Date().getFullYear();renderProducts();renderCart();
 <script>
 (function(){
  const root=document.getElementById("promoSlider"), section=root.closest("section"), track=root.querySelector(".live-slide"), prev=root.querySelector(".live-prev"), next=root.querySelector(".live-next");let items=[],pos=0;
- function show(){if(!items.length){section.hidden=true;return}section.hidden=false;const p=items[pos];track.replaceChildren();const media=document.createElement("div");media.className="live-media";media.innerHTML=art(p);const copy=document.createElement("div");const title=document.createElement("h3");title.textContent=p.name;const specs=document.createElement("p");specs.textContent=p.specs||"";const price=document.createElement("strong");price.textContent=Number.isFinite(p.price)&&p.price>0?fmt(p.price)+" DA":"Prix sur demande";const link=document.createElement("button");link.className="btn btn-primary";link.textContent="Voir le produit";link.addEventListener("click",()=>detail(p.id));copy.append(title,specs,price,document.createElement("br"),link);track.append(media,copy);prev.hidden=next.hidden=items.length<2;}
+ function show(){if(!items.length){section.hidden=true;return}section.hidden=false;const p=items[pos];track.replaceChildren();const media=document.createElement("div");media.className="live-media";media.innerHTML=art(p);const copy=document.createElement("div");const title=document.createElement("h3");title.textContent=p.name;const specs=document.createElement("p");specs.textContent=p.specs||"";const price=document.createElement("strong");price.textContent=Number.isFinite(p.price)&&p.price>0?fmt(p.price)+" DA":"Prix sur demande";const link=document.createElement("button");link.className="btn btn-primary";link.textContent="Voir le produit";link.addEventListener("click",()=>detail(p.id));copy.append(title,specs,price,document.createElement("br"),link);track.append(media,copy);prev.hidden=next.hidden=items.length<2;root.querySelector(".live-count").textContent=(pos+1)+" / "+items.length;}
  function move(d){if(items.length){pos=(pos+d+items.length)%items.length;show()}}
  prev.addEventListener("click",()=>move(-1));next.addEventListener("click",()=>move(1));let x=0;root.addEventListener("touchstart",e=>{x=e.touches[0].clientX},{passive:true});root.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-x;if(Math.abs(dx)>45)move(dx<0?1:-1)},{passive:true});
  document.addEventListener("monpanier:catalog-ready",()=>{items=state.custom.filter(p=>p.id&&p.name).slice(0,8);pos=0;show()});
