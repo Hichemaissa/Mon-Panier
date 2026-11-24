@@ -48,7 +48,7 @@ const $$=s=>[...document.querySelectorAll(s)];
 const cfg=window.MONPANIER_SUPABASE||{}, valid=!!(cfg.url&&cfg.anonKey&&window.supabase);
 const db=valid?window.supabase.createClient(cfg.url,cfg.anonKey):null;
 const store={products:[],orders:[],items:[],settings:{},categories:[]};
-let gallerySupported=false, categoryReady=false, loading=null;
+let gallerySupported=false, categoryReady=false, loading=null, categoryLoading=null;
 const ready={products:false,orders:false,items:false,settings:false};
 const fmt=n=>new Intl.NumberFormat("fr-DZ").format(Number(n)||0)+" DA";
 const safe=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -68,18 +68,20 @@ async function refreshDashboard(){
  const status=$("#dashboard-status");$("#dashboard-refresh").disabled=true;status.textContent="Actualisation…";
  const tasks=[["products","Produits",()=>db.from("products").select("*").limit(1000)],["orders","Commandes",()=>db.from("orders").select("*").order("created_at",{ascending:false}).limit(500)],["items","Détails des commandes",()=>db.from("order_items").select("*").limit(5000)],["settings","Paramètres",()=>db.from("shop_settings").select("*").eq("id",1).maybeSingle()]];
  const errors=[];
- await Promise.all(tasks.map(async ([key,label,query])=>{
+ const categoriesTask=loadCategories();
+  await Promise.all(tasks.map(async ([key,label,query])=>{
   try{const result=await query();if(result.error)throw result.error;store[key]=result.data||(key==="settings"?{}:[]);ready[key]=true}
   catch(error){ready[key]=false;errors.push(label+" : "+(error.message||"Erreur réseau"))}
  }));
- await Promise.all([loadCategories(),(async()=>{try{const probe=await db.from("products").select("image_urls").limit(1);gallerySupported=!probe.error}catch{gallerySupported=false}})()]);
+ await Promise.all([categoriesTask,(async()=>{try{const probe=await db.from("products").select("image_urls").limit(1);gallerySupported=!probe.error}catch{gallerySupported=false}})()]);
  $("#gallery-notice").classList.toggle("hidden",gallerySupported);
  $("#p-gallery-upload").disabled=!gallerySupported;$("#p-gallery-links").disabled=!gallerySupported;
  renderCategoryManagement();render();
  if(ready.settings){$("#shop-name").value=store.settings.shop_name||"Mon Panier Informatique";$("#shop-phone").value=store.settings.whatsapp||"213560283892"}
  $("#add").disabled=!ready.products;$("#seed-suggestions").disabled=!ready.products;$("#csv").disabled=!ready.orders;
  $("#settings-form").querySelectorAll("input,button").forEach(el=>el.disabled=!ready.settings);
- status.textContent=errors.length?"Chargement partiel : "+errors.join(" ; "):"Données actualisées.";
+ if(!categoryReady)errors.push("Catégories : synchronisation indisponible (voir l’onglet Catégories)");
+  status.textContent=errors.length?"Chargement partiel : "+errors.join(" ; "):"Données actualisées.";
 }
 $("#dashboard-refresh").onclick=load;
 function render(){
@@ -128,8 +130,8 @@ $("#stock-list").onclick=async event=>{
  const amount=input.value.trim()===""?NaN:Number(input.value);
  if(!Number.isInteger(amount)||amount<0||amount>999999){notify("Quantité invalide.",true);return}
  button.disabled=true;
- const {error}=await db.from("products").update({stock:amount,updated_at:new Date().toISOString()}).eq("id",button.dataset.stockSave);
- if(error){button.disabled=false;notify(error.message,true)}else{notify("Stock mis à jour.");await load()}
+ const {data,error}=await db.from("products").update({stock:amount,updated_at:new Date().toISOString()}).eq("id",button.dataset.stockSave).select("id").maybeSingle();
+ if(error||!data){button.disabled=false;notify(error?.message||"Stock non modifié.",true)}else{notify("Stock mis à jour.");await load()}
 };
 // Exemples avec photographies réelles d'équipement (photos d'illustration,
 // pas des visuels officiels de modèle). Les prix et stocks restent à définir.
@@ -205,7 +207,7 @@ try{
  art:cat==="laptops"?"laptop":cat==="desktops"?"desktop":cat==="screens"?"aio":cat==="printers"?"printer":"keyboard",
  color:"#f58227",glow:"#ffe0b9",updated_at:new Date().toISOString()};
  if(gallerySupported)obj.image_urls=album;
- const {error}=id?await db.from("products").update(obj).eq("id",id):await db.from("products").insert(obj);
+ const query=id?db.from("products").update(obj).eq("id",id):db.from("products").insert(obj);const {data,error}=await query.select("id").maybeSingle();if(!data&&!error)throw Error("Produit non enregistré.");
  if(error)throw error;
  $("#editor").classList.add("hidden");
  notify("Produit et photos enregistrés.");
@@ -219,7 +221,7 @@ $("#csv").onclick=()=>{const rows=[["Identifiant","Date","Client","Téléphone",
 const initialCategories=[{slug:"laptops",name:"PC portables",sort_order:10},{slug:"desktops",name:"PC de bureau",sort_order:20},{slug:"screens",name:"Écrans",sort_order:30},{slug:"printers",name:"Imprimantes",sort_order:40},{slug:"accessories",name:"Accessoires",sort_order:50}];
 function resetCategory(){ $("#category-form").reset();$("#category-id").value="";$("#category-slug").readOnly=false; }
 function renderCategoryManagement(){
- const cats=categoryReady?store.categories:[...initialCategories,...store.categories.filter(c=>!initialCategories.some(d=>d.slug===c.slug))];
+ const cats=[...store.categories,...initialCategories.filter(c=>!store.categories.some(d=>d.slug===c.slug))].sort((a,b)=>(a.sort_order??0)-(b.sort_order??0)||a.name.localeCompare(b.name,"fr"));
  const options=[...cats,...[...new Set(store.products.map(p=>p.category).filter(Boolean))].filter(slug=>!cats.some(c=>c.slug===slug)).map(slug=>({slug,name:slug,is_active:false}))];
  const current=$("#p-category").value,filter=$("#product-filter").value;
  $("#p-category").innerHTML=options.filter(c=>c.is_active!==false||store.products.some(p=>p.category===c.slug)).map(c=>'<option value="'+safe(c.slug)+'">'+safe(c.name)+'</option>').join("");
@@ -227,18 +229,24 @@ function renderCategoryManagement(){
  if([...$("#p-category").options].some(x=>x.value===current))$("#p-category").value=current;
  if([...$("#product-filter").options].some(x=>x.value===filter))$("#product-filter").value=filter;
  $("#category-form").querySelectorAll("input,select,button").forEach(el=>el.disabled=!categoryReady);
- $("#category-list").innerHTML=cats.map(c=>'<tr><td>'+safe(c.name)+'</td><td>'+safe(c.slug)+'</td><td>'+(categoryReady?(c.is_active?"Oui":"Non"):"Non vérifié")+'</td><td>'+(categoryReady&&c.id?'<button data-category-edit="'+safe(c.id)+'">Modifier</button> <button data-category-toggle="'+safe(c.id)+'">'+(c.is_active?"Masquer":"Afficher")+'</button>':'Lecture seule')+'</td></tr>').join("")||'<tr><td colspan="4">Aucune catégorie</td></tr>';
+ $("#category-list").innerHTML=cats.map(c=>'<tr><td>'+safe(c.name)+'</td><td>'+safe(c.slug)+'</td><td>'+(c.id?(c.is_active?"Oui":"Non"):"Non synchronisée")+'</td><td>'+(categoryReady&&c.id?'<button data-category-edit="'+safe(c.id)+'">Modifier</button> <button data-category-toggle="'+safe(c.id)+'">'+(c.is_active?"Masquer":"Afficher")+'</button>':'Lecture seule')+'</td></tr>').join("")||'<tr><td colspan="4">Aucune catégorie</td></tr>';
 }
-async function loadCategories(){
+function loadCategories(){
+ if(categoryLoading)return categoryLoading;
+ categoryLoading=refreshCategories().finally(()=>{categoryLoading=null});
+ return categoryLoading;
+}
+async function refreshCategories(){
  const status=$("#category-status"),refresh=$("#category-refresh");
  refresh.disabled=true;status.textContent="Chargement des catégories…";
  categoryReady=false;
- renderCategoryManagement();
  try{
+  renderCategoryManagement();
   let {data,error}=await db.from("categories").select("*").order("sort_order").order("name");
   if(error)throw error;
   store.categories=data||[];
-  const missing=initialCategories.filter(c=>!store.categories.some(x=>x.slug===c.slug));
+   categoryReady=true;
+   const missing=initialCategories.filter(c=>!store.categories.some(x=>x.slug===c.slug));
   if(missing.length){
    const saved=await db.from("categories").upsert(missing,{onConflict:"slug",ignoreDuplicates:true});
    if(saved.error)throw saved.error;
@@ -250,9 +258,9 @@ async function loadCategories(){
   categoryReady=true;
   status.textContent=store.categories.length+" catégorie(s) chargée(s).";
  }catch(error){
-  status.textContent="Liste indicative en lecture seule. Synchronisation impossible : "+(error.message||"Erreur réseau")+". Vérifiez la migration supabase/cms-migration.sql et les droits administrateur.";
+  status.textContent=(categoryReady?"Catégories existantes disponibles, initialisation incomplète. ":"Liste indicative en lecture seule. Synchronisation impossible : ")+(error.message||"Erreur réseau")+". Vérifiez la migration supabase/cms-migration.sql et les droits administrateur.";
  }finally{
-  renderCategoryManagement();refresh.disabled=false;
+  try{renderCategoryManagement()}finally{refresh.disabled=false}
  }
 }
 $("#category-refresh").onclick=async()=>{await loadCategories();render()};
@@ -263,8 +271,8 @@ $("#category-list").onclick=async e=>{
  $("#category-id").value=c.id;$("#category-name").value=c.name;$("#category-slug").value=c.slug;$("#category-slug").readOnly=true;
  $("#category-description").value=c.description||"";$("#category-image").value=c.image_url||"";$("#category-order").value=c.sort_order||0;$("#category-active").value=String(c.is_active);$("#category-form").scrollIntoView({behavior:"smooth"});return}
  if(tg){const c=store.categories.find(c=>c.id===tg.dataset.categoryToggle);if(!c)return;
- const {error}=await db.from("categories").update({is_active:!c.is_active}).eq("id",c.id);
- if(error)notify(error.message,true);else{notify("Catégorie mise à jour.");await loadCategories();render()}}
+ const {data,error}=await db.from("categories").update({is_active:!c.is_active}).eq("id",c.id).select("id").maybeSingle();
+ if(error||!data)notify(error?.message||"Catégorie non modifiée.",true);else{notify("Catégorie mise à jour.");await loadCategories();render()}}
 };
 $("#category-form").onsubmit=async e=>{
  e.preventDefault();if(!categoryReady){notify("Synchronisez les catégories avant de modifier.",true);return}const id=$("#category-id").value,name=$("#category-name").value.trim();
@@ -273,8 +281,8 @@ $("#category-form").onsubmit=async e=>{
  const image=$("#category-image").value.trim();if(image&&!image.startsWith("https://")){notify("Utilisez une image HTTPS.",true);return}
  const obj={name,description:$("#category-description").value.trim(),image_url:image||null,sort_order:Number($("#category-order").value)||0,is_active:$("#category-active").value==="true"};
  if(!id)obj.slug=slug;
- const {error}=id?await db.from("categories").update(obj).eq("id",id):await db.from("categories").insert(obj);
- if(error)notify(error.message,true);else{notify("Catégorie enregistrée.");resetCategory();await loadCategories();render()}
+ const query=id?db.from("categories").update(obj).eq("id",id):db.from("categories").insert(obj);const {data,error}=await query.select("id").maybeSingle();
+ if(error||!data)notify(error?.message||"Catégorie non enregistrée.",true);else{notify("Catégorie enregistrée.");resetCategory();await loadCategories();render()}
 };
 
 start().catch(e=>notify(e.message,true));
