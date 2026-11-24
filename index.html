@@ -313,6 +313,9 @@ body.category-drawer-open{overflow:hidden}
 
 /* Contact row beneath the map and brand */
 .shop-footer .footer-bottom-contact{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:16px 32px;margin-top:28px;padding:18px 0 0;border-top:1px solid #ffffff29}.shop-footer .footer-bottom-contact .footer-phone{margin:0}.shop-footer .footer-bottom-contact .footer-phone a{margin:0;white-space:nowrap;font-size:15px}.shop-footer .footer-bottom-contact .footer-social{margin:0;justify-content:center}.shop-footer .footer-bottom-contact .footer-social>a,.shop-footer .footer-bottom-contact .footer-social>span{margin:0}.shop-footer .footer-bottom-contact+.foot-bottom{margin-top:22px}@media(max-width:650px){.shop-footer .footer-bottom-contact{flex-direction:column;align-items:center;gap:16px;padding-top:20px}.shop-footer .footer-bottom-contact+.foot-bottom{margin-top:22px}}
+
+/* Product WhatsApp CTA */
+.product-actions .add-btn{background:#128c4b;color:#fff;line-height:1.3;min-width:0;padding:7px 5px;white-space:normal;overflow-wrap:normal}.product-actions .add-btn:hover{background:#0e713d}#detailBody [data-action="requestWhatsApp"]{background:#128c4b;color:#fff;border-color:#128c4b}#detailBody [data-action="requestWhatsApp"]:hover{background:#0e713d}
 </style>
 </head>
 <body>
@@ -504,7 +507,7 @@ body.category-drawer-open{overflow:hidden}
       <div class="featured-warning"><b>À noter :</b> batterie faible. Chargeur d’origine inclus.</div>
       <div class="featured-purchase">
         <strong>Prix sur demande</strong>
-        <a class="btn btn-primary" href="https://wa.me/213560283892?text=Bonjour%2C%20je%20souhaite%20conna%C3%AEtre%20le%20prix%20du%20PC%20portable%2014%20pouces%20Intel%20Celeron%20N2840%2C%204%20Go%20RAM%2C%20SSD%20120%20Go." target="_blank" rel="noopener noreferrer">Demander le prix sur WhatsApp</a>
+        <a class="btn btn-primary" href="https://wa.me/213560283892?text=Bonjour%2C%20je%20souhaite%20conna%C3%AEtre%20le%20prix%20du%20PC%20portable%2014%20pouces%20Intel%20Celeron%20N2840%2C%204%20Go%20RAM%2C%20SSD%20120%20Go." target="_blank" rel="noopener noreferrer">Demander sur WhatsApp</a>
       </div>
     </div>
   </article>
@@ -660,7 +663,7 @@ function renderProducts(){
  <div class="product-art" data-action="detail" data-id="${p.id}" style="--glow:${p.glow||"#ffe3c2"}"><span class="tag ${p.oldPrice?"sale":""}">${safe(p.badge||"Nouveau")}</span><button class="heart ${state.favorites.has(p.id)?"active":""}" data-action="like" data-id="${p.id}" aria-label="Ajouter aux favoris">${state.favorites.has(p.id)?"♥":"♡"}</button>${art(p)}</div>
  <div class="product-content"><div class="product-category">${categoryNames[p.category]}</div><h3 class="product-name">${safe(p.name)}</h3><div class="product-specs">${safe(p.specs)}</div>
  <div class="price-wrap"><span class="price">${priceHTML(p)}</span>${p.oldPrice?`<span class="old-price">${fmt(p.oldPrice)}</span>`:""}</div>
- <div class="product-actions"><button class="add-btn" data-action="add" data-id="${p.id}">+ Ajouter au panier</button><button class="view-btn" data-action="detail" data-id="${p.id}" aria-label="Détails du produit">↗</button></div></div></article>`).join(""):`<div class="empty"><h3>Aucun produit trouvé 🔍</h3><p>Essayez une autre recherche ou catégorie.</p><button class="btn btn-light" data-action="reset">Tous les produits</button></div>`;
+ <div class="product-actions"><button class="add-btn" data-action="requestWhatsApp" data-id="${p.id}">Demander sur WhatsApp</button><button class="view-btn" data-action="detail" data-id="${p.id}" aria-label="Détails du produit">↗</button></div></div></article>`).join(""):`<div class="empty"><h3>Aucun produit trouvé 🔍</h3><p>Essayez une autre recherche ou catégorie.</p><button class="btn btn-light" data-action="reset">Tous les produits</button></div>`;
  updateBadges();
 }
 function updateBadges(){$("#cartCount").textContent=Object.values(state.cart).reduce((a,n)=>a+n,0);$("#favCount").textContent=state.favorites.size}
@@ -701,7 +704,8 @@ function openBackdrop(){document.body.style.overflow="hidden";$("#overlay").clas
 function closeAll(){$(".drawer.show")?.classList.remove("show");$$(".dialog.show").forEach(el=>el.classList.remove("show"));$("#overlay").classList.remove("show");document.body.style.overflow=""}
 function openDrawer(){closeAll();renderCart();openBackdrop();$("#cartDrawer").classList.add("show")}
 function openDialog(id){closeAll();openBackdrop();$("#"+id).classList.add("show")}
-function detail(id){const p=getProduct(id);if(!p)return;const gallery=Array.isArray(p.gallery)?`<div class="printer-gallery" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:8px 0 15px">${p.gallery.map((url,i)=>`<button type="button" data-printer-image="${safe(url)}" aria-label="Vue ${i+1}" style="border:1px solid #ddd;border-radius:9px;padding:3px;background:white"><img src="${safe(url)}" alt="Vue ${i+1} de ${safe(p.name)}" style="width:100%;aspect-ratio:1;object-fit:contain"></button>`).join("")}</div>`:"";$("#detailBody").innerHTML=`<div class="art-large" id="detailMainArt">${art(p)}</div>${gallery}<span class="eyebrow">${categoryNames[p.category]}</span><h3 style="margin:6px 0">${safe(p.name)}</h3><p style="font-size:12px;color:#65778a">Produit de démonstration · Prix et disponibilité à confirmer.</p><div class="details-spec">${safe(p.specs).split("•").map(s=>`<span>${s.trim()}</span>`).join("")}</div><div class="price" style="margin:11px 0">${priceHTML(p)}</div><button class="btn btn-primary full" data-action="add" data-id="${p.id}">+ Ajouter au panier</button>`;openDialog("detailDialog")}
+function detail(id){const p=getProduct(id);if(!p)return;const gallery=Array.isArray(p.gallery)?`<div class="printer-gallery" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:8px 0 15px">${p.gallery.map((url,i)=>`<button type="button" data-printer-image="${safe(url)}" aria-label="Vue ${i+1}" style="border:1px solid #ddd;border-radius:9px;padding:3px;background:white"><img src="${safe(url)}" alt="Vue ${i+1} de ${safe(p.name)}" style="width:100%;aspect-ratio:1;object-fit:contain"></button>`).join("")}</div>`:"";$("#detailBody").innerHTML=`<div class="art-large" id="detailMainArt">${art(p)}</div>${gallery}<span class="eyebrow">${categoryNames[p.category]}</span><h3 style="margin:6px 0">${safe(p.name)}</h3><p style="font-size:12px;color:#65778a">Produit de démonstration · Prix et disponibilité à confirmer.</p><div class="details-spec">${safe(p.specs).split("•").map(s=>`<span>${s.trim()}</span>`).join("")}</div><div class="price" style="margin:11px 0">${priceHTML(p)}</div><button class="btn btn-primary full" data-action="requestWhatsApp" data-id="${p.id}">Demander sur WhatsApp</button>`;openDialog("detailDialog")}
+function requestProductWhatsApp(id){const p=getProduct(id);if(!p)return;const message=`Bonjour, je souhaite connaître le prix et la disponibilité de ce produit : ${p.name}. Merci.`;window.open(`https://wa.me/213560283892?text=${encodeURIComponent(message)}`,"_blank","noopener,noreferrer")}
 function contact(){if(!state.phone){openDialog("settingsDialog");toast("Renseignez un numéro de contact.");return}window.open(`https://wa.me/${state.phone}?text=${encodeURIComponent("Bonjour, je souhaite obtenir des informations sur les produits Mon Panier Informatique.")}`,"_blank","noopener,noreferrer")}
 document.addEventListener("click",e=>{const thumb=e.target.closest("[data-printer-image]");if(thumb){const main=$("#detailMainArt img");if(main)main.src=thumb.dataset.printerImage;return;}
  const btn=e.target.closest("[data-action],[data-category],[data-category-link]");if(!btn)return;
@@ -709,7 +713,7 @@ document.addEventListener("click",e=>{const thumb=e.target.closest("[data-printe
  if(btn.dataset.category){e.preventDefault();setCategory(btn.dataset.category);return}
  const a=btn.dataset.action,id=btn.dataset.id;
  if(a==="cart")openDrawer();if(a==="close")closeAll();if(a==="settings"){$("#shopPhone").value=state.phone;openDialog("settingsDialog")}
- if(a==="add")add(id);if(a==="like")like(id);if(a==="detail")detail(id);
+ if(a==="add")add(id);if(a==="requestWhatsApp")requestProductWhatsApp(id);if(a==="like")like(id);if(a==="detail")detail(id);
  if(a==="favorites"){state.favoritesOnly=!state.favoritesOnly;state.cat="all";renderProducts();$("#products").scrollIntoView({behavior:"smooth"});toast(state.favoritesOnly?"Afficher les favoris":"Tous les produits")}
  if(a==="qty"){state.cart[id]=Math.max(0,(state.cart[id]||0)+Number(btn.dataset.delta));if(!state.cart[id])delete state.cart[id];write("monpanier-cart",state.cart);renderCart()}
  if(a==="remove"){delete state.cart[id];write("monpanier-cart",state.cart);renderCart()}
