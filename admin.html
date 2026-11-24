@@ -68,20 +68,26 @@ async function refreshDashboard(){
  const status=$("#dashboard-status");$("#dashboard-refresh").disabled=true;status.textContent="Actualisation…";
  const tasks=[["products","Produits",()=>db.from("products").select("*").limit(1000)],["orders","Commandes",()=>db.from("orders").select("*").order("created_at",{ascending:false}).limit(500)],["items","Détails des commandes",()=>db.from("order_items").select("*").limit(5000)],["settings","Paramètres",()=>db.from("shop_settings").select("*").eq("id",1).maybeSingle()]];
  const errors=[];
- const categoriesTask=loadCategories();
-  await Promise.all(tasks.map(async ([key,label,query])=>{
-  try{const result=await query();if(result.error)throw result.error;store[key]=result.data||(key==="settings"?{}:[]);ready[key]=true}
-  catch(error){ready[key]=false;errors.push(label+" : "+(error.message||"Erreur réseau"))}
- }));
- await Promise.all([categoriesTask,(async()=>{try{const probe=await db.from("products").select("image_urls").limit(1);gallerySupported=!probe.error}catch{gallerySupported=false}})()]);
- $("#gallery-notice").classList.toggle("hidden",gallerySupported);
- $("#p-gallery-upload").disabled=!gallerySupported;$("#p-gallery-links").disabled=!gallerySupported;
- renderCategoryManagement();render();
- if(ready.settings){$("#shop-name").value=store.settings.shop_name||"Mon Panier Informatique";$("#shop-phone").value=store.settings.whatsapp||"213560283892"}
- $("#add").disabled=!ready.products;$("#seed-suggestions").disabled=!ready.products;$("#csv").disabled=!ready.orders;
- $("#settings-form").querySelectorAll("input,button").forEach(el=>el.disabled=!ready.settings);
- if(!categoryReady)errors.push("Catégories : synchronisation indisponible (voir l’onglet Catégories)");
-  status.textContent=errors.length?"Chargement partiel : "+errors.join(" ; "):"Données actualisées.";
+ const display=()=>{
+  renderCategoryManagement();render();
+  $("#add").disabled=!ready.products;$("#seed-suggestions").disabled=!ready.products;$("#csv").disabled=!ready.orders;
+  $("#settings-form").querySelectorAll("input,button").forEach(el=>el.disabled=!ready.settings);
+ };
+ display();
+ const categoryTask=loadCategories().then(()=>{if(!categoryReady)errors.push("Catégories : voir l’onglet Catégories");display()}).catch(error=>errors.push("Catégories : "+error.message));
+ const galleryTask=(async()=>{
+  try{const probe=await db.from("products").select("image_urls").limit(1).abortSignal(AbortSignal.timeout(12000));gallerySupported=!probe.error}catch{gallerySupported=false}
+  $("#gallery-notice").classList.toggle("hidden",gallerySupported);
+  $("#p-gallery-upload").disabled=!gallerySupported;$("#p-gallery-links").disabled=!gallerySupported;
+ })();
+ await Promise.allSettled([...tasks.map(async ([key,label,query])=>{
+  try{const result=await query().abortSignal(AbortSignal.timeout(12000));if(result.error)throw result.error;store[key]=result.data||(key==="settings"?{}:[]);ready[key]=true;
+   if(key==="settings"){$("#shop-name").value=store.settings.shop_name||"Mon Panier Informatique";$("#shop-phone").value=store.settings.whatsapp||"213560283892"}
+  }catch(error){ready[key]=false;errors.push(label+" : "+(error.message||"Erreur réseau"))}
+  finally{display();status.textContent=errors.length?"Actualisation partielle : "+errors.join(" ; "):"Actualisation…"}
+ }),categoryTask,galleryTask]);
+ display();
+ status.textContent=errors.length?"Chargement partiel : "+errors.join(" ; "):"Données actualisées : "+store.products.length+" produit(s), "+store.orders.length+" commande(s).";
 }
 $("#dashboard-refresh").onclick=load;
 function render(){
@@ -98,7 +104,8 @@ const select='<select data-status="'+safe(o.id)+'">'+["nouvelle","confirmee","ex
 return '<tr><td>'+safe(new Date(o.created_at).toLocaleString("fr-DZ"))+'</td><td>'+safe(o.customer_name)+'<br>'+safe(o.customer_phone)+'<br>'+safe(o.customer_city)+'<br><small>'+safe(o.customer_address||"")+'</small><br><small>'+safe(o.notes||"")+'</small></td><td>'+description+'</td><td>'+fmt(o.total)+'</td><td>'+select+'</td></tr>';
 }).join("")||'<tr><td colspan="5">Aucune commande.</td></tr>';
 if(!ready.products){$("#product-list").innerHTML='<tr><td colspan="6">Catalogue indisponible. Actualisez le tableau de bord.</td></tr>';$("#stock-list").innerHTML='<tr><td colspan="4">Stock indisponible.</td></tr>';$("#count-products").textContent="—";$("#count-low").textContent="—"}
-if(!ready.orders){$("#order-list").innerHTML='<tr><td colspan="5">Commandes indisponibles.</td></tr>';$("#count-orders").textContent="—";$("#count-total").textContent="—"}
+if(ready.orders&&!ready.items&&store.orders.length){$("#order-list").insertAdjacentHTML("afterbegin",'<tr><td colspan="5">Détails des articles indisponibles. Les commandes restent visibles.</td></tr>')}
+ if(!ready.orders){$("#order-list").innerHTML='<tr><td colspan="5">Commandes indisponibles.</td></tr>';$("#count-orders").textContent="—";$("#count-total").textContent="—"}
 }
 function edit(p){
 $("#product-form").reset();
@@ -242,15 +249,15 @@ async function refreshCategories(){
  categoryReady=false;
  try{
   renderCategoryManagement();
-  let {data,error}=await db.from("categories").select("*").order("sort_order").order("name");
+  let {data,error}=await db.from("categories").select("*").order("sort_order").order("name").abortSignal(AbortSignal.timeout(12000));
   if(error)throw error;
   store.categories=data||[];
    categoryReady=true;
    const missing=initialCategories.filter(c=>!store.categories.some(x=>x.slug===c.slug));
   if(missing.length){
-   const saved=await db.from("categories").upsert(missing,{onConflict:"slug",ignoreDuplicates:true});
+   const saved=await db.from("categories").upsert(missing,{onConflict:"slug",ignoreDuplicates:true}).abortSignal(AbortSignal.timeout(12000));
    if(saved.error)throw saved.error;
-   const result=await db.from("categories").select("*").order("sort_order").order("name");
+   const result=await db.from("categories").select("*").order("sort_order").order("name").abortSignal(AbortSignal.timeout(12000));
    if(result.error)throw result.error;
    store.categories=result.data||[];
    if(initialCategories.some(c=>!store.categories.some(x=>x.slug===c.slug)))throw Error("Certaines catégories restent indisponibles.");
