@@ -391,7 +391,7 @@ body.category-drawer-open{overflow:hidden}
 </header>
 <main>
 
-<section class="container" id="promotions" hidden style="padding-top:24px">
+<section id="promotions" hidden style="padding-top:24px">
 <style>
 #promotions{width:100%;max-width:none;margin:0;padding:0!important;background:linear-gradient(115deg,#fff0df,#f5d9bd);box-sizing:border-box}#promotions[hidden]{display:none}
 #promoSlider{position:relative;width:100%;max-width:none;border:0;border-radius:0;background:transparent;overflow:hidden;color:#302331}
@@ -401,7 +401,7 @@ body.category-drawer-open{overflow:hidden}
 #promoSlider .live-prev,#promoSlider .live-next{position:absolute;top:45%;border:0;border-radius:50%;width:36px;height:36px;background:white;color:#302331;font-size:24px}#promoSlider .live-prev{left:12px}#promoSlider .live-next{right:12px}
 #promoSlider .live-count{display:block;text-align:center;padding:0 0 12px;font-size:12px}
 @media(max-width:600px){#promoSlider .live-slide{grid-template-columns:1fr;padding:16px 42px;gap:12px;min-height:0}#promoSlider .live-media{height:180px}#promoSlider .live-prev,#promoSlider .live-next{top:95px;width:28px;height:28px}}
-</style>
+#promotions{position:relative!important;width:100vw!important;max-width:100vw!important;margin-left:calc(50% - 50vw)!important;margin-right:calc(50% - 50vw)!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:linear-gradient(110deg,#fff7ed,#f5d8b9)!important}#promoSlider{width:100%!important;max-width:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important}#promoSlider .live-media{border:0!important;border-radius:0!important;box-shadow:none!important}#promoSlider .live-slide{max-width:1400px;margin:auto}#promoSlider .live-count{font-weight:700;letter-spacing:.15em}</style>
 <div id="promoSlider" aria-roledescription="carousel" aria-label="Produits du catalogue"><div class="live-slide" aria-live="polite"></div><span class="live-count" aria-hidden="true"></span><button class="live-prev" type="button" aria-label="Produit précédent">‹</button><button class="live-next" type="button" aria-label="Produit suivant">›</button></div></section>
 <section class="container front-categories" aria-labelledby="frontCategoriesTitle">
   <div class="front-categories-head"><div><div class="eyebrow">DÉCOUVRIR</div><h2 id="frontCategoriesTitle">Nos catégories</h2></div><span>Choisissez votre univers informatique</span></div>
