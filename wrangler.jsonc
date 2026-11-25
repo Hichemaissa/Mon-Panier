@@ -1,0 +1,15 @@
+{
+  "name": "monpanier",
+  "compatibility_date": "2026-11-25",
+  "workers_dev": true,
+  "assets": {
+    "directory": ".",
+    "html_handling": "none"
+  },
+  "routes": [
+    {
+      "pattern": "emonpanier.com",
+      "custom_domain": true
+    }
+  ]
+}
