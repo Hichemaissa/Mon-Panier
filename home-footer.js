@@ -1,11 +1,27 @@
-
-document.querySelector(".footer-map-frame")?.addEventListener("click",function(){
+const mapButton=document.querySelector(".footer-map-frame");
+let mapObserver;
+function loadFooterMap(){
+ if(!mapButton?.isConnected)return;
+ mapObserver?.disconnect();
  const frame=document.createElement("iframe");
- frame.className=this.className;frame.title="Localisation de Mon Panier Informatique";
- frame.src=this.dataset.mapSrc;frame.referrerPolicy="strict-origin-when-cross-origin";frame.allowFullscreen=true;
- this.replaceWith(frame);
-},{once:true});
-
+ frame.className=mapButton.className;
+ frame.title="Localisation de Mon Panier Informatique";
+ frame.referrerPolicy="strict-origin-when-cross-origin";
+ frame.allowFullscreen=true;
+ frame.src=mapButton.dataset.mapSrc;
+ mapButton.replaceWith(frame);
+}
+if(mapButton){
+ mapButton.addEventListener("click",loadFooterMap,{once:true});
+ if("IntersectionObserver" in window){
+  mapObserver=new IntersectionObserver(entries=>{
+   if(entries.some(entry=>entry.isIntersecting))loadFooterMap();
+  },{rootMargin:"900px 0px"});
+  mapObserver.observe(mapButton);
+ }else{
+  window.addEventListener("scroll",()=>{if(mapButton.getBoundingClientRect().top<innerHeight+900)loadFooterMap();},{passive:true});
+ }
+}
 (async function(){
  const cfg=window.MONPANIER_SUPABASE;
  if(!cfg||!window.supabase)return;
@@ -28,6 +44,6 @@ document.querySelector(".footer-map-frame")?.addEventListener("click",function()
  }
  for(const key of ["header","footer"]){const img=q("."+key+"-full-logo img");if(!img)continue;const url=https(s[key+"_logo_url"]);if(url)img.src=url;const width=Number(s[key+"_logo_width"]);if(url&&width>=40&&width<=400){img.style.width=width+"px";img.style.maxWidth="100%";img.style.height="auto";img.style.objectFit="contain";}}
  if(s.footer_hours){const h=q(".shop-hours > div");if(h){h.replaceChildren();const b=document.createElement("strong");b.textContent="Horaires d’ouverture";const t=document.createElement("div");t.textContent=s.footer_hours;t.style.whiteSpace="pre-line";h.append(b,t);}}
- if(s.footer_address){const f=q(".footer-map-frame"),a=q(".footer-map-link");if(f&&f.tagName==="BUTTON")f.dataset.mapSrc="https://maps.google.com/maps?q="+encodeURIComponent(s.footer_address)+"&output=embed";if(a)a.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.footer_address);}
+ if(s.footer_address){const f=q(".footer-map-frame"),a=q(".footer-map-link");if(f){const mapUrl="https://maps.google.com/maps?q="+encodeURIComponent(s.footer_address)+"&output=embed";if(f.tagName==="BUTTON")f.dataset.mapSrc=mapUrl;else if(f.tagName==="IFRAME"&&f.src!==mapUrl)f.src=mapUrl;}if(a)a.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(s.footer_address);}
  if(s.footer_text){const p=document.createElement("p");p.textContent=s.footer_text;q(".footer-identity")?.append(p);}
 })().catch(e=>console.warn("Footer settings",e));
