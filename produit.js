@@ -51,7 +51,7 @@ function renderPhoto(){
  hero.innerHTML='<img src="'+safe(url)+'" alt="'+safe(current.name)+' — photo '+(active+1)+'" loading="eager" decoding="async">';
  hero.querySelector("img")?.addEventListener("error",()=>{photos.splice(active,1);active=Math.min(active,Math.max(0,photos.length-1));renderPhoto()},{once:true});
  if(!zoom.hidden){$id("zoom-image").src=url;$id("zoom-image").alt=current.name+" — photo "+(active+1)}
- thumbs.innerHTML=photos.map((u,i)=>'<button type="button" class="thumb'+(i===active?" active":"")+'" data-photo="'+i+'" aria-label="Voir la photo '+(i+1)+'"><img loading="lazy" src="'+safe(u)+'" alt=""></button>').join("");
+ thumbs.innerHTML=photos.map((u,i)=>'<button type="button" class="thumb'+(i===active?" active":"")+'" data-photo="'+i+'" aria-label="Voir la photo '+(i+1)+'"><img loading="lazy" decoding="async" src="'+safe(u)+'" alt=""></button>').join("");
  $id("photo-count").textContent=photos.length===1?"1 photo disponible":"Photo "+(active+1)+" sur "+photos.length;
  $id("previous").hidden=photos.length<=1;
  $id("next").hidden=photos.length<=1;
@@ -139,7 +139,7 @@ async function fetchRelated(p){
  if(!options.length){related.hidden=true;return}
  related.hidden=false;
  grid.innerHTML=options.map(x=>{
-  const photo=validImage(x.image_url)?'<img loading="lazy" src="'+safe(x.image_url)+'" alt="'+safe(x.name)+'">': '<div class="placeholder" aria-label="Illustration">💻</div>';
+  const photo=validImage(x.image_url)?'<img loading="lazy" decoding="async" src="'+safe(x.image_url)+'" alt="'+safe(x.name)+'">': '<div class="placeholder" aria-label="Illustration">💻</div>';
   return '<a class="related-item" href="./produit.html?produit='+encodeURIComponent(x.id)+'"><div class="related-thumb">'+photo+'</div><b>'+safe(x.name)+'</b><span>'+money(x.price)+'</span></a>';
  }).join("");
 }

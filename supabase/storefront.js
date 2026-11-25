@@ -41,6 +41,7 @@ async function loadDynamicCategories(){
 function alertError(message){toast(message||"Une erreur est survenue.")}
 async function refreshCatalog(){
  try{
+  const categoriesPromise=loadDynamicCategories().catch(error=>console.warn("Catégories non activées",error));
   const [prod,settings]=await Promise.all([
    db.from("products").select("id,category,name,specs,price,old_price,badge,art,color,glow,image_url,image_urls,stock,is_active").eq("is_active",true).order("created_at",{ascending:false}),
    db.from("shop_settings").select("whatsapp").eq("id",1).maybeSingle()
@@ -59,17 +60,9 @@ async function refreshCatalog(){
   // Existing database products take priority when identifiers match.
 
   categoryNames.screens=categoryNames.screens||"Écrans";
-  // Optional migration: additional photo URLs for the product detail gallery.
-  // Keep the live catalogue usable if the owner has not applied the migration yet.
-  try {
-    const album=await db.from("products").select("id,image_urls").eq("is_active",true);
-    if(!album.error){
-      const extra=new Map((album.data||[]).map(row=>[row.id,Array.isArray(row.image_urls)?row.image_urls:[]]));
-      state.custom.forEach(item=>{item.image_urls=extra.get(item.id)||[]});
-    }
-  }catch(err){console.warn("Product gallery not yet configured.",err)}
+  // Gallery URLs are already included in the primary product query.
   state.phone=settings.data?.whatsapp||shopOriginalPhone;
-  await loadDynamicCategories();
+  await categoriesPromise;
   // Synchroniser la photo de la fiche mise en avant avec le vrai produit.
   const featured=document.getElementById("featured-laptop-n2840");
   if(featured){
@@ -84,6 +77,7 @@ async function refreshCatalog(){
       photo.src=match.image_url;
       photo.alt="Photo réelle du "+match.name;
       photo.loading="lazy";
+      photo.decoding="async";
       photo.style.cssText="display:block;width:100%;height:100%;min-height:230px;object-fit:contain;padding:12px";
       photo.addEventListener("error",()=>{
         photo.remove();
