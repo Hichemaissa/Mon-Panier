@@ -1,27 +1,3 @@
-const mapButton=document.querySelector(".footer-map-frame");
-let mapObserver;
-function loadFooterMap(){
- if(!mapButton?.isConnected)return;
- mapObserver?.disconnect();
- const frame=document.createElement("iframe");
- frame.className=mapButton.className;
- frame.title="Localisation de Mon Panier Informatique";
- frame.referrerPolicy="strict-origin-when-cross-origin";
- frame.allowFullscreen=true;
- frame.src=mapButton.dataset.mapSrc;
- mapButton.replaceWith(frame);
-}
-if(mapButton){
- mapButton.addEventListener("click",loadFooterMap,{once:true});
- if("IntersectionObserver" in window){
-  mapObserver=new IntersectionObserver(entries=>{
-   if(entries.some(entry=>entry.isIntersecting))loadFooterMap();
-  },{rootMargin:"900px 0px"});
-  mapObserver.observe(mapButton);
- }else{
-  window.addEventListener("scroll",()=>{if(mapButton.getBoundingClientRect().top<innerHeight+900)loadFooterMap();},{passive:true});
- }
-}
 (async function(){
  const cfg=window.MONPANIER_SUPABASE;
  if(!cfg||!window.supabase)return;
